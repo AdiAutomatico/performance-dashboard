@@ -41,22 +41,40 @@ NUM_COLS = 13  # A through M
 
 class SheetsClient:
     def __init__(self, creds_path: str, sheet_id: str):
-        # Support both a file path (local) and inline JSON string (Streamlit Cloud)
+        # 1. Streamlit Cloud: use [gcp_service_account] secrets table
         try:
-            info = json.loads(creds_path)
-            creds = service_account.Credentials.from_service_account_info(
-                info, scopes=SCOPES
-            )
-        except (json.JSONDecodeError, TypeError):
+            import streamlit as st
+            if hasattr(st, "secrets") and "gcp_service_account" in st.secrets:
+                creds = service_account.Credentials.from_service_account_info(
+                    st.secrets["gcp_service_account"], scopes=SCOPES
+                )
+                self.service = build("sheets", "v4", credentials=creds)
+                self.sheet_id = sheet_id
+                self._tab_gid_cache: dict[str, int] = {}
+                return
+        except Exception:
+            pass
+
+        # 2. Local: file path
+        try:
             creds_file = Path(creds_path)
-            if not creds_file.exists():
-                raise FileNotFoundError(f"Google credentials file not found: {creds_path}")
-            creds = service_account.Credentials.from_service_account_file(
-                str(creds_file), scopes=SCOPES
-            )
+            if creds_file.exists():
+                creds = service_account.Credentials.from_service_account_file(
+                    str(creds_file), scopes=SCOPES
+                )
+                self.service = build("sheets", "v4", credentials=creds)
+                self.sheet_id = sheet_id
+                self._tab_gid_cache = {}
+                return
+        except Exception:
+            pass
+
+        # 3. JSON string fallback
+        info = json.loads(creds_path)
+        creds = service_account.Credentials.from_service_account_info(info, scopes=SCOPES)
         self.service = build("sheets", "v4", credentials=creds)
         self.sheet_id = sheet_id
-        self._tab_gid_cache: dict[str, int] = {}
+        self._tab_gid_cache = {}
 
     def _sheets(self):
         return self.service.spreadsheets()
