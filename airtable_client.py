@@ -44,6 +44,7 @@ LEADS_FIELDS = [
 ]
 
 APPOINTMENT_FIELDS = [
+    "Lead",
     "Client (from Lead)",
     "Appointment Date",
     "Status (from Lead)",
