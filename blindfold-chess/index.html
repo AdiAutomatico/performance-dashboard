@@ -221,6 +221,10 @@
   .mic svg { width: 34px; height: 34px; }
   .mic-label { font-size: 14px; color: var(--ink-2); font-weight: 500; }
   .mic-hint { font-size: 13px; color: var(--faint); }
+  .meter { width: 160px; height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
+  .meter > span { display: block; height: 100%; width: 0; background: var(--mic); transition: width .08s linear; }
+  .mic-dev { font-size: 12px; color: var(--faint); overflow-wrap: anywhere; }
+  .blind .meter { width: 220px; }
   .typed { display: flex; gap: 8px; }
   .typed input {
     flex: 1 1 160px; min-width: 0; font: inherit; font-size: 14px; padding: 10px 12px;
@@ -341,6 +345,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10a7 7 0 0 0 14 0"></path><path d="M12 17v5"></path><path d="M8 22h8"></path></svg>
           </button>
           <div class="hearing" id="hearing"></div>
+          <div class="meter" aria-hidden="true"><span id="meter2"></span></div>
           <div class="chips">
             <button type="button" class="chip" data-say="read the board">read the board</button>
             <button type="button" class="chip" data-say="where is my king">where is my king</button>
@@ -362,6 +367,8 @@
             </button>
             <div class="mic-label" id="micLabel">Speak a move</div>
             <div class="mic-hint">Click, or hold the space bar</div>
+            <div class="meter" aria-hidden="true"><span id="meter1"></span></div>
+            <div class="mic-dev" id="micDev"></div>
           </div>
         </div>
       </div>
@@ -1196,13 +1203,14 @@ function main() {
 
   function startListening() {
     if (!SR) { showNote('Speech recognition is not available in this browser. Type the command instead.'); return; }
-    if (listening || speechBusy) return;
+    if (listening) return;
+    if (speechBusy) { try { window.speechSynthesis.cancel(); } catch (e) {} speechBusy = false; }
     try {
       rec = new SR();
       rec.lang = 'en-US';
       rec.interimResults = true;
       rec.maxAlternatives = 4;
-      rec.onstart = function () { listening = true; wantListening = true; updateMicUI(); };
+      rec.onstart = function () { listening = true; wantListening = true; updateMicUI(); startMeter(); };
       rec.onresult = function (ev) {
         var last = ev.results[ev.results.length - 1];
         if (!last.isFinal) { $('heard').innerHTML = '<i>Hearing: ' + escapeHtml(last[0].transcript) + '\u2026</i>'; $('hearing').textContent = 'Hearing: \u201C' + last[0].transcript + '\u2026\u201D'; return; }
@@ -1214,10 +1222,17 @@ function main() {
         listening = false; updateMicUI();
         if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed') {
           setVoiceBadge('Microphone blocked', 'warn');
-          showNote('The microphone is blocked in this preview frame. Open the HTML file directly in Chrome (or serve it locally) and allow the microphone. Until then, type commands below; they go through the exact same parser.');
+          if (window.top !== window) showNote('The microphone is blocked inside this preview frame. Open the page at its own address (the GitHub Pages link) and allow the microphone there. Typed commands go through the exact same parser.');
+          else showNote('Chrome is blocking the microphone for this site. Click the icon at the left of the address bar, set Microphone to Allow, then reload the page.');
           $('handsFree').checked = false;
+        } else if (ev.error === 'audio-capture') {
+          setVoiceBadge('No microphone found', 'warn');
+          showNote('No microphone was found. Plug one in or pick an input device in Chrome, then reload.');
+        } else if (ev.error === 'network') {
+          showNote('Speech recognition needs internet access to the browser\u2019s speech service. Check the connection and try again.');
         } else if (ev.error === 'no-speech') {
           $('heard').innerHTML = '<i>No speech heard.</i>'; $('hearing').textContent = 'No speech heard.';
+          if (silentSoFar) showNote('The microphone is open but no sound is arriving. On a Mac: System Settings \u2192 Privacy & Security \u2192 Microphone, make sure Chrome is on. Also check which input device Chrome uses (address bar icon \u2192 Site settings \u2192 Microphone).');
         } else if (ev.error !== 'aborted') {
           showNote('Speech recognition error: ' + ev.error);
         }
@@ -1234,7 +1249,50 @@ function main() {
   function stopListening(silent) {
     if (!silent) wantListening = false;
     if (rec) { try { rec.onend = null; rec.abort(); } catch (e) {} }
-    listening = false; updateMicUI();
+    listening = false; updateMicUI(); stopMeter();
+  }
+
+  // ---------- Microphone level meter ----------
+  // Shows whether sound is actually reaching the browser. If the bar never
+  // moves while you talk, the problem is the OS or device, not the page.
+  var meterStream = null, meterCtx = null, meterRaf = 0, silentSoFar = true, meterStart = 0;
+  function startMeter() {
+    if (meterStream || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
+    silentSoFar = true; meterStart = Date.now();
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
+      meterStream = stream;
+      var track = stream.getAudioTracks()[0];
+      $('micDev').textContent = track && track.label ? 'Mic: ' + track.label : '';
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      meterCtx = new AC();
+      var src = meterCtx.createMediaStreamSource(stream);
+      var an = meterCtx.createAnalyser(); an.fftSize = 512;
+      src.connect(an);
+      var buf = new Uint8Array(an.fftSize);
+      (function tick() {
+        an.getByteTimeDomainData(buf);
+        var peak = 0;
+        for (var i = 0; i < buf.length; i++) { var d = Math.abs(buf[i] - 128); if (d > peak) peak = d; }
+        var pct = Math.min(100, Math.round(peak / 128 * 300));
+        $('meter1').style.width = pct + '%'; $('meter2').style.width = pct + '%';
+        if (pct > 6) silentSoFar = false;
+        meterRaf = requestAnimationFrame(tick);
+      })();
+    }).catch(function (err) {
+      $('micDev').textContent = '';
+      if (err && (err.name === 'NotAllowedError' || err.name === 'SecurityError')) {
+        showNote('Chrome is blocking the microphone for this site. Click the icon at the left of the address bar, set Microphone to Allow, then reload the page.');
+      } else if (err && err.name === 'NotFoundError') {
+        showNote('No microphone was found. Plug one in or pick an input device in Chrome, then reload.');
+      }
+    });
+  }
+  function stopMeter() {
+    if (meterRaf) cancelAnimationFrame(meterRaf); meterRaf = 0;
+    if (meterStream) { meterStream.getTracks().forEach(function (t) { t.stop(); }); meterStream = null; }
+    if (meterCtx) { try { meterCtx.close(); } catch (e) {} meterCtx = null; }
+    $('meter1').style.width = '0'; $('meter2').style.width = '0';
   }
   function updateMicUI() {
     $('micBtn').classList.toggle('on', listening);
