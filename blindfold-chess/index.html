@@ -1,80 +1,117 @@
 <title>Blindfold Chess Trainer</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,400;1,9..144,500&family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
+  /* Dark-first: the evening study. Light palette swaps in for light-theme viewers. */
   :root {
-    --bg: #eff1ec;
-    --surface: #ffffff;
-    --surface-2: #f6f7f3;
-    --ink: #1c2620;
-    --muted: #5d6a62;
-    --line: #d3d9d1;
-    --accent: #1f6f4a;
-    --accent-ink: #ffffff;
-    --accent-soft: #dcefe4;
-    --listen: #c9582a;
-    --listen-soft: #f8e3d8;
-    --warn: #a86b12;
-    --warn-soft: #f7ecd4;
-    --danger: #b3382e;
-    --sq-light: #e9d9b8;
-    --sq-dark: #a97b55;
-    --sq-select: rgba(31,111,74,.55);
-    --sq-target: rgba(31,111,74,.35);
-    --sq-last: rgba(201,88,42,.35);
-    --piece-white: #fbf7ee;
-    --piece-black: #1a1512;
-    --font-body: "Libre Franklin", "Segoe UI", system-ui, sans-serif;
-    --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      color-scheme: dark;
-      --bg: #131815;
-      --surface: #1c221e;
-      --surface-2: #232a25;
-      --ink: #e6eae3;
-      --muted: #98a39b;
-      --line: #313b34;
-      --accent: #56b986;
-      --accent-ink: #0d1a12;
-      --accent-soft: #1e3328;
-      --listen: #e8794a;
-      --listen-soft: #3a2519;
-      --warn: #e0a54a;
-      --warn-soft: #34290f;
-      --danger: #e2665b;
-      --sq-light: #cdb88f;
-      --sq-dark: #8a6242;
-      --sq-select: rgba(86,185,134,.6);
-      --sq-target: rgba(86,185,134,.4);
-      --sq-last: rgba(232,121,74,.4);
-    }
-  }
-  :root[data-theme="dark"] {
     color-scheme: dark;
-    --bg: #131815;
-    --surface: #1c221e;
-    --surface-2: #232a25;
-    --ink: #e6eae3;
-    --muted: #98a39b;
-    --line: #313b34;
-    --accent: #56b986;
-    --accent-ink: #0d1a12;
-    --accent-soft: #1e3328;
-    --listen: #e8794a;
-    --listen-soft: #3a2519;
+    --bg: #171b18;
+    --stage: #1b201d;
+    --surface: #242b27;
+    --surface-2: #1f2521;
+    --ink: #ede9e0;
+    --ink-2: #c9cec5;
+    --muted: #9aa59d;
+    --faint: #6f7872;
+    --line: #2a312c;
+    --line-2: #333b36;
+    --accent: #d4ae62;
+    --accent-ink: #1a1509;
+    --accent-soft: #2c2616;
+    --engine-pill: #1f2a22;
+    --engine-pill-line: #3a4a3e;
+    --engine-pill-ink: #cfe3d3;
+    --mic: #e4734b;
+    --mic-soft: #2b1d16;
+    --mic-ring: rgba(228,115,75,.12);
     --warn: #e0a54a;
     --warn-soft: #34290f;
     --danger: #e2665b;
-    --sq-light: #cdb88f;
-    --sq-dark: #8a6242;
-    --sq-select: rgba(86,185,134,.6);
-    --sq-target: rgba(86,185,134,.4);
-    --sq-last: rgba(232,121,74,.4);
+    --sq-light: #d9c7a4;
+    --sq-dark: #85603f;
+    --sq-last-light: #c9b08a;
+    --sq-last-dark: #9a6a3b;
+    --sq-select: rgba(212,174,98,.55);
+    --sq-target: rgba(212,174,98,.45);
+    --board-edge: #4a3524;
+    --piece-white: #fbf7ee;
+    --piece-black: #1a1512;
+    --shadow: 0 18px 40px rgba(0,0,0,.45);
+    --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+    --font-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      color-scheme: light;
+      --bg: #eceeea;
+      --stage: #f4f5f2;
+      --surface: #ffffff;
+      --surface-2: #e4e7e2;
+      --ink: #1b1f1c;
+      --ink-2: #3c443f;
+      --muted: #5e6862;
+      --faint: #8a938d;
+      --line: #d6dbd5;
+      --line-2: #c6ccc5;
+      --accent: #8a6a2b;
+      --accent-ink: #ffffff;
+      --accent-soft: #f1e8d3;
+      --engine-pill: #e4efe6;
+      --engine-pill-line: #b9d1bf;
+      --engine-pill-ink: #1f4a2e;
+      --mic: #b8552f;
+      --mic-soft: #f6e3da;
+      --mic-ring: rgba(184,85,47,.14);
+      --warn: #8a5a10;
+      --warn-soft: #f7ecd4;
+      --danger: #b3382e;
+      --sq-light: #e4d3b0;
+      --sq-dark: #9c7250;
+      --sq-last-light: #d3bd8f;
+      --sq-last-dark: #ad7c4a;
+      --sq-select: rgba(138,106,43,.5);
+      --sq-target: rgba(138,106,43,.42);
+      --board-edge: #6b4a2e;
+      --shadow: 0 14px 32px rgba(40,30,10,.18);
+    }
+  }
+  :root[data-theme="light"] {
+    color-scheme: light;
+    --bg: #eceeea;
+    --stage: #f4f5f2;
+    --surface: #ffffff;
+    --surface-2: #e4e7e2;
+    --ink: #1b1f1c;
+    --ink-2: #3c443f;
+    --muted: #5e6862;
+    --faint: #8a938d;
+    --line: #d6dbd5;
+    --line-2: #c6ccc5;
+    --accent: #8a6a2b;
+    --accent-ink: #ffffff;
+    --accent-soft: #f1e8d3;
+    --engine-pill: #e4efe6;
+    --engine-pill-line: #b9d1bf;
+    --engine-pill-ink: #1f4a2e;
+    --mic: #b8552f;
+    --mic-soft: #f6e3da;
+    --mic-ring: rgba(184,85,47,.14);
+    --warn: #8a5a10;
+    --warn-soft: #f7ecd4;
+    --danger: #b3382e;
+    --sq-light: #e4d3b0;
+    --sq-dark: #9c7250;
+    --sq-last-light: #d3bd8f;
+    --sq-last-dark: #ad7c4a;
+    --sq-select: rgba(138,106,43,.5);
+    --sq-target: rgba(138,106,43,.42);
+    --board-edge: #6b4a2e;
+    --shadow: 0 14px 32px rgba(40,30,10,.18);
   }
 
   * { box-sizing: border-box; }
   [hidden] { display: none !important; }
+  html, body { height: 100%; }
   body {
     margin: 0;
     background: var(--bg);
@@ -83,472 +120,335 @@
     font-size: 15px;
     line-height: 1.45;
   }
-  .wrap {
-    max-width: 1180px;
-    margin: 0 auto;
-    padding-inline: 16px;
-    padding-block: 18px 40px;
-  }
-  header.top {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 8px 20px;
-    margin-bottom: 14px;
-  }
-  header.top h1 {
-    margin: 0;
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: -.01em;
-  }
-  header.top .sub { color: var(--muted); font-size: 13px; }
+  button { font: inherit; cursor: pointer; }
+  button:focus-visible, input:focus-visible, select:focus-visible, .toggle input:focus-visible + .knob { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-  .badges { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-  .badge {
-    font-size: 12px;
-    font-weight: 600;
-    padding: 4px 9px;
-    border-radius: 999px;
-    border: 1px solid var(--line);
-    background: var(--surface);
-    color: var(--muted);
-    white-space: nowrap;
-  }
-  .badge.ok { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
-  .badge.warn { color: var(--warn); border-color: var(--warn); background: var(--warn-soft); }
-  .badge.live { color: var(--listen); border-color: var(--listen); background: var(--listen-soft); }
+  .app { min-height: 100%; display: flex; flex-direction: column; }
 
-  .layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 360px;
-    gap: 22px;
-    align-items: start;
+  /* Top bar */
+  .top {
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px 20px;
+    padding-block: 14px; padding-inline: 32px;
+    border-bottom: 1px solid var(--line);
+    position: sticky; top: env(safe-area-inset-top, 0px); background: var(--bg); z-index: 5;
   }
-  @media (max-width: 860px) {
-    .layout { grid-template-columns: minmax(0, 1fr); }
+  .brand { display: flex; align-items: baseline; gap: 12px; }
+  .brand h1 { margin: 0; font-family: var(--font-display); font-size: 26px; font-weight: 700; letter-spacing: -.01em; }
+  .brand .tag { font-size: 13px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; font-weight: 600; }
+  .pills { display: flex; gap: 10px; flex-wrap: wrap; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: 600; white-space: nowrap;
+    border: 1px solid var(--line-2); background: var(--surface); color: var(--ink-2);
   }
+  .pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--faint); flex: none; }
+  .pill.ok { border-color: var(--engine-pill-line); background: var(--engine-pill); color: var(--engine-pill-ink); }
+  .pill.ok .dot { background: var(--accent); }
+  .pill.warn { border-color: var(--warn); background: var(--warn-soft); color: var(--warn); }
+  .pill.warn .dot { background: var(--warn); }
+  .pill.live { border-color: var(--mic); background: var(--mic-soft); color: var(--mic); }
+  .pill.live .dot { background: var(--mic); animation: pulse 1.1s infinite; }
 
-  .stage { display: grid; gap: 14px; }
+  /* Body */
+  .body { flex-grow: 1; display: grid; grid-template-columns: minmax(0, 1fr) 372px; }
+  @media (max-width: 980px) { .body { grid-template-columns: minmax(0, 1fr); } }
 
-  .status-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px 14px;
+  .stage {
+    padding-block: 22px 28px; padding-inline: 32px;
+    background: var(--stage); border-right: 1px solid var(--line);
+    display: flex; flex-direction: column; gap: 18px; min-width: 0;
   }
-  .turn {
-    font-size: 17px;
-    font-weight: 600;
-  }
+  @media (max-width: 980px) { .stage { border-right: 0; border-bottom: 1px solid var(--line); } }
+  @media (max-width: 600px) { .stage, .top, .rail { padding-inline: 16px; } }
+
+  .status-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 16px; }
+  .turn { font-size: 20px; font-weight: 600; }
   .turn .who { color: var(--accent); }
   .turn.danger .who { color: var(--danger); }
 
-  .toggle {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    user-select: none;
-    font-weight: 500;
-  }
+  .toggle { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; font-size: 14px; font-weight: 500; color: var(--ink-2); position: relative; }
   .toggle input { position: absolute; opacity: 0; width: 0; height: 0; }
-  .toggle .knob {
-    width: 40px; height: 22px;
-    border-radius: 999px;
-    background: var(--line);
-    position: relative;
-    transition: background .15s;
-    flex: none;
-  }
-  .toggle .knob::after {
-    content: "";
-    position: absolute;
-    top: 3px; left: 3px;
-    width: 16px; height: 16px;
-    border-radius: 50%;
-    background: var(--surface);
-    box-shadow: 0 1px 2px rgba(0,0,0,.25);
-    transition: transform .15s;
-  }
+  .toggle .knob { width: 42px; height: 24px; border-radius: 999px; background: var(--line-2); position: relative; transition: background .15s; flex: none; }
+  .toggle .knob::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--ink); transition: transform .15s, background .15s; }
   .toggle input:checked + .knob { background: var(--accent); }
-  .toggle input:checked + .knob::after { transform: translateX(18px); }
-  .toggle input:focus-visible + .knob { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .toggle input:checked + .knob::after { transform: translateX(18px); background: var(--accent-ink); }
+
+  .play { display: flex; gap: 22px; align-items: flex-start; flex-wrap: wrap; }
 
   /* Board */
   .board-shell {
-    display: grid;
-    grid-template-columns: 18px minmax(0, 1fr);
-    grid-template-rows: minmax(0, 1fr) 18px;
-    gap: 4px;
-    max-width: 560px;
-    width: 100%;
+    display: grid; grid-template-columns: 16px minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) 16px; gap: 6px;
+    width: min(100%, 560px); flex: 1 1 360px;
   }
-  .ranks, .files {
-    display: grid;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--muted);
-  }
+  .ranks, .files { display: grid; font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
   .ranks { grid-template-rows: repeat(8, 1fr); align-items: center; justify-items: center; }
   .files { grid-column: 2; grid-template-columns: repeat(8, 1fr); justify-items: center; align-items: center; }
   .board {
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    grid-template-rows: repeat(8, 1fr);
-    aspect-ratio: 1 / 1;
-    max-width: 100%;
-    border: 2px solid var(--sq-dark);
-    border-radius: 4px;
-    overflow: hidden;
-    user-select: none;
+    display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr);
+    aspect-ratio: 1 / 1; max-width: 100%;
+    border-radius: 6px; overflow: hidden; user-select: none;
+    box-shadow: 0 0 0 2px var(--board-edge), var(--shadow);
   }
-  .sq {
-    position: relative;
-    display: grid;
-    place-items: center;
-    font-size: clamp(22px, 6vw, 44px);
-    line-height: 1;
-    cursor: default;
-  }
+  .sq { position: relative; display: grid; place-items: center; font-size: clamp(22px, 6vw, 44px); line-height: 1; }
   .sq.light { background: var(--sq-light); }
   .sq.dark { background: var(--sq-dark); }
-  .sq.last::before { content: ""; position: absolute; inset: 0; background: var(--sq-last); }
+  .sq.light.last { background: var(--sq-last-light); }
+  .sq.dark.last { background: var(--sq-last-dark); }
   .sq.selected::before { content: ""; position: absolute; inset: 0; background: var(--sq-select); }
-  .sq.target::after {
-    content: "";
-    position: absolute;
-    width: 26%; height: 26%;
-    border-radius: 50%;
-    background: var(--sq-target);
-  }
-  .sq.target.has-piece::after {
-    width: 100%; height: 100%; border-radius: 0;
-    background: transparent;
-    box-shadow: inset 0 0 0 4px var(--sq-target);
-  }
+  .sq.target::after { content: ""; position: absolute; width: 26%; height: 26%; border-radius: 50%; background: var(--sq-target); }
+  .sq.target.has-piece::after { width: 100%; height: 100%; border-radius: 0; background: transparent; box-shadow: inset 0 0 0 4px var(--sq-target); }
   .sq.movable { cursor: pointer; }
   .sq .p { position: relative; z-index: 1; pointer-events: none; }
   .sq .p.w { color: var(--piece-white); text-shadow: 0 0 2px #000, 0 1px 1px rgba(0,0,0,.6); }
-  .sq .p.b { color: var(--piece-black); text-shadow: 0 0 1px rgba(255,255,255,.35); }
+  .sq .p.b { color: var(--piece-black); text-shadow: 0 0 1px rgba(255,255,255,.3); }
+
+  /* Voice column beside the board */
+  .voice { flex: 1 1 240px; min-width: 0; display: flex; flex-direction: column; gap: 14px; padding-top: 4px; }
+  .eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .said { font-family: var(--font-display); font-style: italic; font-size: 23px; line-height: 1.3; font-weight: 400; text-wrap: balance; min-height: 1.3em; }
+  .rule { height: 1px; background: var(--line); }
+  .heard { font-size: 15px; color: var(--ink-2); min-height: 1.4em; overflow-wrap: anywhere; }
+  .heard i { color: var(--muted); }
+  .heard .san { font-family: var(--font-mono); font-weight: 600; color: var(--accent); }
+  .mic-block { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; margin-top: 6px; }
+  .mic {
+    width: 84px; height: 84px; border-radius: 50%;
+    border: 2px solid var(--line-2); background: var(--surface); color: var(--ink-2);
+    display: grid; place-items: center; transition: box-shadow .2s, border-color .2s, color .2s;
+  }
+  .mic:hover { border-color: var(--mic); color: var(--mic); }
+  .mic.on { border-color: var(--mic); background: var(--mic-soft); color: var(--mic); box-shadow: 0 0 0 10px var(--mic-ring); animation: ring 1.4s infinite; }
+  .mic svg { width: 34px; height: 34px; }
+  .mic-label { font-size: 14px; color: var(--ink-2); font-weight: 500; }
+  .mic-hint { font-size: 13px; color: var(--faint); }
+  .typed { display: flex; gap: 8px; }
+  .typed input {
+    flex: 1 1 160px; min-width: 0; font: inherit; font-size: 14px; padding: 10px 12px;
+    border-radius: 8px; border: 1px solid var(--line-2); background: var(--bg); color: var(--ink);
+  }
+  .btn { font-size: 14px; font-weight: 600; padding: 9px 14px; border-radius: 8px; border: 1px solid var(--line-2); background: var(--surface); color: var(--ink); }
+  .btn:hover { border-color: var(--muted); }
+  .btn.accent { border-color: var(--accent); background: transparent; color: var(--accent); }
+  .btn.accent:hover { background: var(--accent-soft); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .note { font-size: 13px; padding: 8px 12px; border-radius: 8px; background: var(--warn-soft); color: var(--warn); border: 1px solid var(--warn); }
+  .promo { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .promo .btn { font-size: 22px; padding: 4px 12px; }
 
   /* Blindfold panel */
   .blind {
-    max-width: 560px;
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    border-radius: 6px;
-    border: 1px dashed var(--line);
-    background: var(--surface-2);
-    display: grid;
-    align-content: center;
-    justify-items: center;
-    text-align: center;
-    padding: 24px;
-    gap: 10px;
+    flex: 1 1 100%; min-height: 420px;
+    border-radius: 12px; border: 1px dashed var(--line-2); background: var(--bg);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+    gap: 22px; padding-block: 40px; padding-inline: 24px;
   }
-  .blind .big {
-    font-size: clamp(20px, 4vw, 30px);
-    font-weight: 800;
-    letter-spacing: -.01em;
-    text-wrap: balance;
-    max-width: 22ch;
+  .blind .quote { font-family: var(--font-display); font-style: italic; font-size: clamp(26px, 4vw, 44px); line-height: 1.2; font-weight: 400; max-width: 22ch; text-wrap: balance; }
+  .blind .turnline { font-size: 18px; color: var(--muted); }
+  .blind .mic { width: 112px; height: 112px; margin-top: 6px; }
+  .blind .mic svg { width: 44px; height: 44px; }
+  .blind .hearing { font-size: 15px; color: var(--ink-2); font-style: italic; min-height: 1.4em; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 560px; }
+  .chip {
+    font-family: var(--font-mono); font-size: 12px; padding: 5px 10px; border-radius: 6px;
+    background: var(--surface); border: 1px solid var(--line-2); color: var(--ink-2);
   }
-  .blind .lastsaid {
-    font-size: 16px;
-    color: var(--muted);
-    max-width: 40ch;
-    text-wrap: balance;
-  }
-  .blind .eyebrow {
-    font-size: 11px;
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    font-weight: 600;
-  }
+  .chip:hover { border-color: var(--accent); color: var(--accent); }
+  .stage.is-blind .voice-side { display: none; }
 
-  /* Voice bar */
-  .voice {
-    display: grid;
-    gap: 10px;
-    max-width: 560px;
-  }
-  .voice-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-  button {
-    font: inherit;
-    border: 1px solid var(--line);
-    background: var(--surface);
-    color: var(--ink);
-    padding: 9px 14px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-  }
-  button:hover { background: var(--surface-2); }
-  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
-  button.primary:hover { filter: brightness(1.05); }
-  button.mic {
-    display: inline-flex; align-items: center; gap: 10px;
-    padding: 12px 18px;
-    font-size: 16px;
-    border-width: 2px;
-  }
-  button.mic .dot {
-    width: 12px; height: 12px; border-radius: 50%;
-    background: var(--muted);
-    flex: none;
-  }
-  button.mic.on { border-color: var(--listen); background: var(--listen-soft); color: var(--listen); }
-  button.mic.on .dot { background: var(--listen); animation: pulse 1s infinite; }
-  @keyframes pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: .5; } }
-  @media (prefers-reduced-motion: reduce) { button.mic.on .dot { animation: none; } }
-  button:disabled { opacity: .5; cursor: not-allowed; }
-
-  .typed { display: flex; gap: 8px; flex-wrap: wrap; }
-  .typed input {
-    flex: 1 1 220px;
-    font: inherit;
-    padding: 9px 12px;
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    background: var(--surface);
-    color: var(--ink);
-  }
-  .typed input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-
-  .heard {
-    font-family: var(--font-mono);
-    font-size: 13px;
-    color: var(--muted);
-    min-height: 1.4em;
-  }
-  .heard b { color: var(--ink); font-weight: 600; }
-
-  .note {
-    font-size: 13px;
-    padding: 8px 12px;
-    border-radius: 8px;
-    background: var(--warn-soft);
-    color: var(--warn);
-    border: 1px solid var(--warn);
-    max-width: 560px;
-  }
-  .note.info { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
-
-  /* Sidebar */
-  .side { display: grid; gap: 14px; }
-  .panel {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    padding: 14px 16px;
-  }
-  .panel h2 {
-    margin: 0 0 10px;
-    font-size: 12px;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    font-weight: 600;
-  }
-  .field { display: grid; gap: 6px; margin-bottom: 12px; }
-  .field:last-child { margin-bottom: 0; }
-  .field label.lbl { font-size: 13px; font-weight: 600; }
-  .field .hint { font-size: 12px; color: var(--muted); }
-  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
-  .seg label { padding: 7px 14px; cursor: pointer; font-weight: 600; font-size: 13px; }
+  /* Rail */
+  .rail { padding-block: 20px 32px; padding-inline: 24px; display: flex; flex-direction: column; gap: 18px; background: var(--bg); min-width: 0; }
+  .section { display: flex; flex-direction: column; gap: 10px; }
+  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field .lbl { font-size: 13px; color: var(--muted); }
+  .seg { display: flex; border: 1px solid var(--line-2); border-radius: 8px; overflow: hidden; }
+  .seg label { flex: 1; text-align: center; padding: 8px 0; font-size: 14px; font-weight: 600; cursor: pointer; color: var(--ink-2); position: relative; }
   .seg input { position: absolute; opacity: 0; width: 0; height: 0; }
-  .seg input:checked + span { color: var(--accent-ink); }
   .seg label:has(input:checked) { background: var(--accent); color: var(--accent-ink); }
   .seg label:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: -2px; }
-  input[type=range] { width: 100%; accent-color: var(--accent); }
-  .range-row { display: flex; align-items: center; gap: 10px; }
-  .range-row output { font-family: var(--font-mono); font-size: 13px; min-width: 9ch; }
-  .check { display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; }
-  .check input { accent-color: var(--accent); width: 16px; height: 16px; margin: 0; }
+  .stepper { display: flex; align-items: center; border: 1px solid var(--line-2); border-radius: 8px; overflow: hidden; }
+  .stepper button { width: 38px; font-size: 18px; padding: 5px 0; border: 0; background: transparent; color: var(--ink-2); }
+  .stepper button:hover { background: var(--surface); }
+  .stepper output { flex: 1; text-align: center; font-family: var(--font-mono); font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .hint { font-size: 13px; color: var(--faint); }
   .btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
 
   .moves {
-    font-family: var(--font-mono);
-    font-size: 13px;
-    display: grid;
-    grid-template-columns: 3.2ch 1fr 1fr;
-    gap: 3px 10px;
-    max-height: 220px;
-    overflow: auto;
-    font-variant-numeric: tabular-nums;
+    display: grid; grid-template-columns: 32px minmax(0, 1fr) minmax(0, 1fr); gap: 6px 12px;
+    font-family: var(--font-mono); font-size: 14px; font-variant-numeric: tabular-nums;
+    max-height: 168px; overflow: auto;
   }
-  .moves .n { color: var(--muted); }
+  .moves .n { color: var(--faint); }
   .moves .m.cur { color: var(--accent); font-weight: 600; }
-  .moves .empty { grid-column: 1 / -1; color: var(--muted); font-family: var(--font-body); }
+  .moves .empty { grid-column: 1 / -1; color: var(--faint); font-family: var(--font-body); }
 
-  .log { display: grid; gap: 8px; max-height: 300px; overflow: auto; font-size: 13px; }
-  .log .e { display: grid; grid-template-columns: 62px 1fr; gap: 8px; align-items: start; }
-  .log .k {
-    font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
-    padding: 2px 6px; border-radius: 4px; text-align: center;
-    background: var(--surface-2); color: var(--muted);
-  }
-  .log .e.heard .k { background: var(--listen-soft); color: var(--listen); }
-  .log .e.engine .k { background: var(--accent-soft); color: var(--accent); }
-  .log .e.you .k { background: var(--surface-2); color: var(--ink); }
-  .log .e.err .k { background: var(--warn-soft); color: var(--warn); }
+  .log { display: flex; flex-direction: column; gap: 10px; font-size: 14px; max-height: 320px; overflow: auto; }
+  .log .e { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 10px; align-items: start; }
+  .log .k { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding-top: 3px; }
+  .log .e.engine .k { color: var(--accent); }
+  .log .e.heard .k { color: var(--mic); }
+  .log .e.heard .t { font-style: italic; color: var(--ink-2); }
+  .log .e.you .t { color: var(--ink-2); }
+  .log .e.err .k { color: var(--warn); }
   .log .t { overflow-wrap: anywhere; }
 
-  .say-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 13px; }
-  .say-list li { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; }
-  .say-list li span { flex-basis: 100%; }
-  .say-list code {
-    font-family: var(--font-mono);
-    font-size: 12.5px;
-    color: var(--ink);
-    background: var(--surface-2);
-    padding: 2px 6px;
-    border-radius: 4px;
-    display: inline-block;
-    width: fit-content;
-  }
-  .say-list span { color: var(--muted); }
-  details summary { cursor: pointer; font-weight: 600; font-size: 13px; }
-  details[open] summary { margin-bottom: 8px; }
+  .check { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 14px; color: var(--ink-2); cursor: pointer; }
+  .check input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--accent); margin: 0; flex: none; }
+  .check select, .check input[type=range] { max-width: 58%; }
+  select { font: inherit; font-size: 13px; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--line-2); background: var(--surface); color: var(--ink); }
+  input[type=range] { accent-color: var(--accent); width: 140px; }
 
-  .promo { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-  .promo button { font-size: 22px; padding: 4px 12px; }
+  @keyframes pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: .5; } }
+  @keyframes ring { 0%,100% { box-shadow: 0 0 0 10px var(--mic-ring); } 50% { box-shadow: 0 0 0 18px var(--mic-ring); } }
+  @media (prefers-reduced-motion: reduce) { .pill.live .dot, .mic.on { animation: none; } }
 </style>
 
-<div class="wrap">
+<div class="app">
   <header class="top">
-    <div>
-      <h1>Blindfold Chess Trainer</h1>
-      <div class="sub">Stockfish plays the moves. You play by clicking or by voice. Hide the board when you are ready.</div>
+    <div class="brand">
+      <h1>Blindfold Chess</h1>
+      <span class="tag">Trainer</span>
     </div>
-    <div class="badges">
-      <span class="badge" id="engineBadge">Engine: loading…</span>
-      <span class="badge" id="voiceBadge">Voice: checking…</span>
+    <div class="pills">
+      <span class="pill" id="engineBadge"><span class="dot"></span><span id="engineBadgeText">Engine loading…</span></span>
+      <span class="pill" id="voiceBadge"><span class="dot"></span><span id="voiceBadgeText">Voice: checking…</span></span>
     </div>
   </header>
 
-  <div class="layout">
-    <section class="stage">
+  <div class="body">
+    <section class="stage" id="stage">
       <div class="status-row">
-        <div class="turn" id="turn">Your move <span class="who">(White)</span></div>
+        <div class="turn" id="turn">Your move <span class="who">· White</span></div>
         <label class="toggle">
           <input type="checkbox" id="blindToggle">
           <span class="knob"></span>
-          <span>Hide board (blindfold)</span>
+          <span>Hide board</span>
         </label>
       </div>
 
-      <div id="boardWrap" class="board-shell">
-        <div class="ranks" id="ranks"></div>
-        <div class="board" id="board" aria-label="Chess board"></div>
-        <div class="files" id="files"></div>
-      </div>
+      <div class="play">
+        <div id="boardWrap" class="board-shell">
+          <div class="ranks" id="ranks"></div>
+          <div class="board" id="board" aria-label="Chess board"></div>
+          <div class="files" id="files"></div>
+        </div>
 
-      <div id="blindPanel" class="blind" hidden>
-        <div class="eyebrow">Board hidden</div>
-        <div class="big" id="blindTurn">Your move as White</div>
-        <div class="lastsaid" id="blindLast">Say a move, or "read the board" to hear the position.</div>
+        <div id="blindPanel" class="blind" hidden>
+          <div class="eyebrow" id="blindEyebrow">Board hidden</div>
+          <div class="quote" id="blindLast">Say a move, or “read the board” to hear the position.</div>
+          <div class="turnline" id="blindTurn">Your move, White.</div>
+          <button type="button" class="mic" id="micBtn2" aria-label="Speak a move">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10a7 7 0 0 0 14 0"></path><path d="M12 17v5"></path><path d="M8 22h8"></path></svg>
+          </button>
+          <div class="hearing" id="hearing"></div>
+          <div class="chips">
+            <button type="button" class="chip" data-say="read the board">read the board</button>
+            <button type="button" class="chip" data-say="where is my king">where is my king</button>
+            <button type="button" class="chip" data-say="what can my knight do">what can my knight do</button>
+            <button type="button" class="chip" data-say="last move">last move</button>
+            <button type="button" class="chip" data-say="show board">show board</button>
+          </div>
+        </div>
+
+        <div class="voice voice-side">
+          <div class="eyebrow">Last said</div>
+          <div class="said" id="saidLine">Ready when you are.</div>
+          <div class="rule"></div>
+          <div class="eyebrow">Heard</div>
+          <div class="heard" id="heard"><i>Nothing yet.</i></div>
+          <div class="mic-block">
+            <button type="button" class="mic" id="micBtn" aria-label="Speak a move">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10a7 7 0 0 0 14 0"></path><path d="M12 17v5"></path><path d="M8 22h8"></path></svg>
+            </button>
+            <div class="mic-label" id="micLabel">Speak a move</div>
+            <div class="mic-hint">Click, or hold the space bar</div>
+          </div>
+        </div>
       </div>
 
       <div id="promoRow" class="promo" hidden>
         <span>Promote to:</span>
-        <button type="button" data-promo="q">♕</button>
-        <button type="button" data-promo="r">♖</button>
-        <button type="button" data-promo="b">♗</button>
-        <button type="button" data-promo="n">♘</button>
+        <button type="button" class="btn" data-promo="q">♕</button>
+        <button type="button" class="btn" data-promo="r">♖</button>
+        <button type="button" class="btn" data-promo="b">♗</button>
+        <button type="button" class="btn" data-promo="n">♘</button>
       </div>
 
-      <div class="voice">
-        <div class="voice-row">
-          <button type="button" class="mic" id="micBtn"><span class="dot"></span><span id="micLabel">Speak a move</span></button>
-          <label class="check"><input type="checkbox" id="handsFree"> Keep listening after each move</label>
-        </div>
-        <div class="heard" id="heard"></div>
-        <div class="typed">
-          <input type="text" id="typed" placeholder='Or type what you would say, e.g. "knight to f3"' autocomplete="off" aria-label="Type a voice command">
-          <button type="button" id="typedGo">Send</button>
-        </div>
-        <div class="note" id="micNote" hidden></div>
+      <div class="typed">
+        <input type="text" id="typed" placeholder="or type: knight to f3" autocomplete="off" aria-label="Type a voice command">
+        <button type="button" class="btn" id="typedGo">Send</button>
       </div>
+      <div class="note" id="micNote" hidden></div>
     </section>
 
-    <aside class="side">
-      <div class="panel">
-        <h2>Game</h2>
-        <div class="field">
-          <span class="lbl">You play</span>
-          <div class="seg" role="radiogroup" aria-label="Your color">
-            <label><input type="radio" name="color" value="w" id="colorW" checked><span>White</span></label>
-            <label><input type="radio" name="color" value="b" id="colorB"><span>Black</span></label>
+    <aside class="rail">
+      <div class="section">
+        <div class="eyebrow">Game</div>
+        <div class="grid2">
+          <div class="field">
+            <span class="lbl">You play</span>
+            <div class="seg" role="radiogroup" aria-label="Your color">
+              <label><input type="radio" name="color" value="w" id="colorW" checked>White</label>
+              <label><input type="radio" name="color" value="b" id="colorB">Black</label>
+            </div>
+          </div>
+          <div class="field">
+            <label class="lbl" for="level">Strength</label>
+            <div class="stepper">
+              <button type="button" id="levelDown" aria-label="Weaker">−</button>
+              <output id="levelOut" for="level">3 / 8</output>
+              <button type="button" id="levelUp" aria-label="Stronger">+</button>
+              <input type="hidden" id="level" value="3">
+            </div>
           </div>
         </div>
-        <div class="field">
-          <label class="lbl" for="level">Engine strength</label>
-          <div class="range-row">
-            <input type="range" id="level" min="1" max="8" value="3">
-            <output id="levelOut" for="level">Level 3</output>
-          </div>
-          <div class="hint" id="levelHint">Stockfish skill 4, quick search. Roughly club beginner.</div>
-        </div>
+        <div class="hint" id="levelHint">Stockfish skill 4, quick search. About a club beginner.</div>
         <div class="btn-row">
-          <button type="button" class="primary" id="newGame">New game</button>
-          <button type="button" id="undoBtn">Take back</button>
-          <button type="button" id="readBtn">Read board aloud</button>
+          <button type="button" class="btn accent" id="newGame">New game</button>
+          <button type="button" class="btn" id="undoBtn">Take back</button>
+          <button type="button" class="btn" id="readBtn">Read board</button>
         </div>
       </div>
 
-      <div class="panel">
-        <h2>Voice settings</h2>
-        <div class="field">
-          <label class="check"><input type="checkbox" id="speakEngine" checked> Speak the engine's moves</label>
-        </div>
-        <div class="field">
-          <label class="check"><input type="checkbox" id="speakMine" checked> Repeat my move back to me</label>
-        </div>
-        <div class="field">
-          <label class="check"><input type="checkbox" id="confirmMoves"> Ask me to confirm before playing a move</label>
-          <div class="hint">With this on, say "yes" or "no" after the move is read back.</div>
-        </div>
-        <div class="field">
-          <label class="lbl" for="rate">Speech speed</label>
-          <div class="range-row">
-            <input type="range" id="rate" min="0.7" max="1.4" step="0.1" value="1">
-            <output id="rateOut" for="rate">1.0×</output>
-          </div>
-        </div>
-      </div>
+      <div class="rule"></div>
 
-      <div class="panel">
-        <h2>Moves</h2>
+      <div class="section">
+        <div class="eyebrow">Moves</div>
         <div class="moves" id="moves"><div class="empty">No moves yet.</div></div>
       </div>
 
-      <div class="panel">
-        <h2>What happened</h2>
+      <div class="rule"></div>
+
+      <div class="section">
+        <div class="eyebrow">Conversation</div>
         <div class="log" id="log"></div>
       </div>
 
-      <div class="panel">
-        <details open>
-          <summary>What you can say</summary>
-          <ul class="say-list">
-            <li><code>knight f3</code> <code>knight to f3</code> <code>e4</code> <code>pawn to e4</code><span>Play a move.</span></li>
-            <li><code>bishop takes e5</code> <code>e2 to e4</code><span>Captures, or from-square to to-square.</span></li>
-            <li><code>castle kingside</code> <code>castle long</code><span>Castling.</span></li>
-            <li><code>e8 queen</code> <code>promote to rook</code><span>Promotion. Defaults to queen.</span></li>
-            <li><code>read the board</code><span>Hear every piece, both sides.</span></li>
-            <li><code>where is my king</code> <code>where are your rooks</code><span>Find pieces.</span></li>
-            <li><code>what can my knight do</code><span>Legal moves for a piece.</span></li>
-            <li><code>last move</code> <code>repeat</code><span>Hear the engine's move again.</span></li>
-            <li><code>take back</code> <code>new game</code> <code>hide board</code> <code>show board</code><span>Controls.</span></li>
-            <li><code>yes</code> <code>no</code><span>Confirm or cancel, when confirmation is on.</span></li>
-          </ul>
-        </details>
+      <div class="rule"></div>
+
+      <div class="section">
+        <div class="eyebrow">Try saying</div>
+        <div class="chips" style="justify-content: flex-start;">
+          <button type="button" class="chip" data-say="read the board">read the board</button>
+          <button type="button" class="chip" data-say="where is my king">where is my king</button>
+          <button type="button" class="chip" data-say="castle kingside">castle kingside</button>
+          <button type="button" class="chip" data-say="bishop takes e5">bishop takes e5</button>
+          <button type="button" class="chip" data-say="last move">last move</button>
+          <button type="button" class="chip" data-say="take back">take back</button>
+          <button type="button" class="chip" data-say="hide board">hide board</button>
+        </div>
+      </div>
+
+      <div class="rule"></div>
+
+      <div class="section">
+        <div class="eyebrow">Voice</div>
+        <label class="check"><span>Voice</span><select id="voiceSel" aria-label="Voice"><option value="">Auto (best available)</option></select></label>
+        <label class="check"><span>Speed</span><input type="range" id="rate" min="0.7" max="1.3" step="0.05" value="0.95"><output id="rateOut" for="rate" hidden>0.95×</output></label>
+        <label class="check"><span>Keep listening after each move</span><input type="checkbox" id="handsFree"></label>
+        <label class="check"><span>Speak the engine's moves</span><input type="checkbox" id="speakEngine" checked></label>
+        <label class="check"><span>Repeat my move back to me</span><input type="checkbox" id="speakMine" checked></label>
+        <label class="check"><span>Confirm before playing</span><input type="checkbox" id="confirmMoves"></label>
       </div>
     </aside>
   </div>
@@ -564,7 +464,7 @@ function main() {
   var LEVELS = [
     { skill: 0,  depth: 1,  ms: 200,  hint: 'Stockfish skill 0, one-ply search. Makes real blunders.' },
     { skill: 2,  depth: 2,  ms: 250,  hint: 'Stockfish skill 2. Casual beginner.' },
-    { skill: 4,  depth: 3,  ms: 300,  hint: 'Stockfish skill 4, quick search. Roughly club beginner.' },
+    { skill: 4,  depth: 3,  ms: 300,  hint: 'Stockfish skill 4, quick search. About a club beginner.' },
     { skill: 7,  depth: 4,  ms: 400,  hint: 'Stockfish skill 7. Solid casual player.' },
     { skill: 10, depth: 6,  ms: 600,  hint: 'Stockfish skill 10. Club player.' },
     { skill: 13, depth: 8,  ms: 800,  hint: 'Stockfish skill 13. Strong club player.' },
@@ -591,7 +491,7 @@ function main() {
     var el = document.createElement('div');
     el.className = 'e ' + kind;
     var k = document.createElement('span'); k.className = 'k';
-    k.textContent = { heard: 'heard', engine: 'engine', you: 'you', err: 'note', app: 'app' }[kind] || kind;
+    k.textContent = { heard: 'Heard', engine: 'Stockfish', you: 'You', err: 'Note', app: 'App' }[kind] || kind;
     var t = document.createElement('span'); t.className = 't'; t.textContent = text;
     el.appendChild(k); el.appendChild(t);
     var box = $('log');
@@ -604,7 +504,7 @@ function main() {
   function say(text, opts) {
     opts = opts || {};
     lastAnnouncement = text;
-    $('blindLast').textContent = text;
+    showSaid(text);
     if (!opts.quiet) log(opts.kind || 'engine', text);
     if (!('speechSynthesis' in window)) return;
     try {
@@ -612,8 +512,11 @@ function main() {
       var resume = listening;
       if (resume) stopListening(true);
       var u = new SpeechSynthesisUtterance(text);
-      u.rate = parseFloat($('rate').value) || 1;
+      u.rate = parseFloat($('rate').value) || 0.95;
+      u.pitch = 1;
       u.lang = 'en-US';
+      var v = currentVoice();
+      if (v) { u.voice = v; u.lang = v.lang || 'en-US'; }
       speechBusy = true;
       var done = false;
       var finish = function () {
@@ -627,6 +530,66 @@ function main() {
       window.speechSynthesis.speak(u);
     } catch (e) { speechBusy = false; }
   }
+
+  function showSaid(text) {
+    $('blindLast').textContent = '\u201C' + text + '\u201D';
+    $('saidLine').textContent = '\u201C' + text + '\u201D';
+  }
+
+  // ---------- Choosing a natural-sounding voice ----------
+  // Browsers ship very different voices. Neural/"natural" ones (Edge's Online
+  // voices, Google's, Apple's premium voices) sound human; the old local ones
+  // sound robotic. Rank what this browser offers and pick the best by default.
+  var voiceList = [];
+  function scoreVoice(v) {
+    var n = (v.name || '').toLowerCase(), lang = (v.lang || '').toLowerCase();
+    if (lang.indexOf('en') !== 0) return -100;
+    var s = 0;
+    if (/natural|neural/.test(n)) s += 8;
+    if (/online/.test(n)) s += 3;
+    if (/premium|enhanced|hd/.test(n)) s += 5;
+    if (/google/.test(n)) s += 3;
+    if (/siri|samantha|ava|allison|zoe|aria|jenny|guy|ryan|sonia|libby|emma|andrew|brian/.test(n)) s += 2;
+    if (/microsoft/.test(n) && !/online|natural/.test(n)) s -= 2;   // legacy desktop voices
+    if (/espeak|compact|fred|albert|zarvox|bad news|bubbles|cellos|trinoids|whisper|wobble|boing|junior|kathy|ralph/.test(n)) s -= 10;
+    if (lang === 'en-us') s += 2; else if (lang === 'en-gb') s += 1;
+    if (!v.localService) s += 1;   // cloud voices are usually the neural ones
+    return s;
+  }
+  function loadVoices() {
+    if (!('speechSynthesis' in window)) return;
+    var all = window.speechSynthesis.getVoices() || [];
+    if (!all.length) return;
+    voiceList = all.filter(function (v) { return scoreVoice(v) > -100; })
+      .sort(function (a, b) { return scoreVoice(b) - scoreVoice(a); });
+    var sel = $('voiceSel');
+    var keep = sel.value;
+    sel.innerHTML = '';
+    var auto = document.createElement('option'); auto.value = '';
+    auto.textContent = voiceList.length ? 'Auto: ' + voiceList[0].name : 'Auto (best available)';
+    sel.appendChild(auto);
+    voiceList.forEach(function (v) {
+      var o = document.createElement('option'); o.value = v.name; o.textContent = v.name + ' (' + v.lang + ')';
+      sel.appendChild(o);
+    });
+    sel.value = keep;
+    if (sel.value !== keep) sel.value = '';
+  }
+  function currentVoice() {
+    var want = $('voiceSel').value;
+    if (want) { for (var i = 0; i < voiceList.length; i++) if (voiceList[i].name === want) return voiceList[i]; }
+    return voiceList[0] || null;
+  }
+  if ('speechSynthesis' in window) {
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+    setTimeout(loadVoices, 500);
+  }
+  $('voiceSel').addEventListener('change', function () {
+    try { localStorage.setItem('bc-voice', $('voiceSel').value); } catch (e) {}
+    say('Hello. I will read the moves in this voice.', { kind: 'app' });
+  });
+  try { var savedVoice = localStorage.getItem('bc-voice'); if (savedVoice) { $('voiceSel').value = savedVoice; setTimeout(function () { $('voiceSel').value = savedVoice; }, 600); } } catch (e) {}
 
   function sqSpoken(sq) { return sq[0].toUpperCase() + ' ' + sq[1]; }
   function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
@@ -792,17 +755,17 @@ function main() {
   }
 
   function setEngineBadge(text, cls) {
-    var b = $('engineBadge'); b.textContent = text; b.className = 'badge ' + (cls || '');
+    var b = $('engineBadge'); $('engineBadgeText').textContent = text; b.className = 'pill ' + (cls || '');
   }
 
   loadStockfish(ENGINE_URLS).then(function (res) {
     if (res) {
       engine = makeStockfishEngine(res.worker);
-      setEngineBadge('Engine: Stockfish 10', 'ok');
+      setEngineBadge('Stockfish 10 · Level ' + $('level').value, 'ok');
       log('app', 'Stockfish loaded from ' + res.url.replace(/^https:\/\//, '') + '.');
     } else {
       engine = makeBuiltinEngine();
-      setEngineBadge('Engine: built-in fallback (weak)', 'warn');
+      setEngineBadge('Built-in engine (weak fallback)', 'warn');
       log('err', 'Could not load Stockfish from a CDN. Using a small built-in engine so you can still try the interface.');
     }
     engine.newGame();
@@ -871,13 +834,14 @@ function main() {
     if (game.in_checkmate()) { text = 'Checkmate. <span class="who">' + (isPlayersTurn() ? 'Engine wins' : 'You win') + '</span>'; danger = isPlayersTurn(); }
     else if (game.in_stalemate()) text = 'Stalemate. <span class="who">Draw</span>';
     else if (game.in_draw()) text = 'Draw <span class="who">(50 moves or repetition)</span>';
-    else if (thinking) text = 'Engine is thinking <span class="who">(' + colorName(game.turn()) + ')</span>';
+    else if (thinking) text = 'Stockfish is thinking <span class="who">· ' + colorName(game.turn()) + '</span>';
     else if (pendingConfirm) { text = 'Confirm: <span class="who">' + pendingConfirm.san + '?</span> Say yes or no'; }
-    else if (isPlayersTurn()) { text = 'Your move <span class="who">(' + colorName(playerColor) + ')</span>' + (game.in_check() ? ' – you are in check' : ''); danger = game.in_check(); }
+    else if (isPlayersTurn()) { text = 'Your move <span class="who">· ' + colorName(playerColor) + '</span>' + (game.in_check() ? ', you are in check' : ''); danger = game.in_check(); }
     else text = 'Engine to move';
     t.innerHTML = text;
     t.className = 'turn' + (danger ? ' danger' : '');
-    $('blindTurn').textContent = t.textContent;
+    $('blindTurn').textContent = t.textContent.replace(' · ', ', ') + '.';
+    $('blindEyebrow').textContent = 'Board hidden · move ' + (Math.floor(game.history().length / 2) + 1);
   }
 
   function renderAll() { renderBoard(); renderMoves(); renderStatus(); }
@@ -892,7 +856,7 @@ function main() {
     renderAll();
     var text = describeMove(made, 'you');
     lastMoveText = text;
-    if ($('speakMine').checked) say(text, { kind: 'you' }); else { lastAnnouncement = text; log('you', text); $('blindLast').textContent = text; }
+    if ($('speakMine').checked) say(text, { kind: 'you' }); else { lastAnnouncement = text; log('you', text); showSaid(text); }
     if (game.game_over()) { announceGameOver(); return true; }
     engineMove();
     return true;
@@ -923,7 +887,7 @@ function main() {
       renderAll();
       var text = describeMove(made, 'engine');
       lastMoveText = text;
-      if ($('speakEngine').checked) say(text); else { lastAnnouncement = text; log('engine', text); $('blindLast').textContent = text; }
+      if ($('speakEngine').checked) say(text); else { lastAnnouncement = text; log('engine', text); showSaid(text); }
       if (game.game_over()) setTimeout(announceGameOver, 400);
     });
   }
@@ -1178,7 +1142,8 @@ function main() {
   // the recognizer's other guesses if the first one fails to parse.
   function handleUtterance(text, alternatives) {
     var all = [text].concat(alternatives || []).filter(Boolean);
-    $('heard').innerHTML = 'Heard: <b>' + escapeHtml(text) + '</b>';
+    $('heard').innerHTML = '\u201C' + escapeHtml(text) + '\u201D';
+    $('hearing').textContent = 'Heard: \u201C' + text + '\u201D';
     log('heard', text);
     if (handleCommand(text)) return;
     if (game.game_over()) { say('The game is over. Say new game to play again.'); return; }
@@ -1202,7 +1167,7 @@ function main() {
   }
 
   function playParsedMove(m) {
-    $('heard').innerHTML += ' → <b>' + escapeHtml(m.san) + '</b>';
+    $('heard').innerHTML += ' <i>played as</i> <span class="san">' + escapeHtml(m.san) + '</span>';
     if ($('confirmMoves').checked) {
       pendingConfirm = m;
       renderStatus();
@@ -1219,14 +1184,14 @@ function main() {
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   var rec = null, listening = false, wantListening = false;
 
-  function setVoiceBadge(text, cls) { var b = $('voiceBadge'); b.textContent = text; b.className = 'badge ' + (cls || ''); }
+  function setVoiceBadge(text, cls) { var b = $('voiceBadge'); $('voiceBadgeText').textContent = text; b.className = 'pill ' + (cls || ''); }
   function showNote(text, info) { var n = $('micNote'); n.textContent = text; n.className = 'note' + (info ? ' info' : ''); n.hidden = !text; }
 
   if (!SR) {
-    setVoiceBadge('Voice in: not supported here', 'warn');
+    setVoiceBadge('No speech recognition here', 'warn');
     showNote('This browser has no speech recognition. Chrome or Edge on desktop or Android work best. You can still type commands below to see exactly how voice input will behave.');
   } else {
-    setVoiceBadge('Voice: ready (click Speak)', 'ok');
+    setVoiceBadge('Voice ready', 'ok');
   }
 
   function startListening() {
@@ -1240,7 +1205,7 @@ function main() {
       rec.onstart = function () { listening = true; wantListening = true; updateMicUI(); };
       rec.onresult = function (ev) {
         var last = ev.results[ev.results.length - 1];
-        if (!last.isFinal) { $('heard').innerHTML = 'Hearing: <i>' + escapeHtml(last[0].transcript) + '</i>'; return; }
+        if (!last.isFinal) { $('heard').innerHTML = '<i>Hearing: ' + escapeHtml(last[0].transcript) + '\u2026</i>'; $('hearing').textContent = 'Hearing: \u201C' + last[0].transcript + '\u2026\u201D'; return; }
         var alts = [];
         for (var i = 1; i < last.length; i++) alts.push(last[i].transcript);
         handleUtterance(last[0].transcript.trim(), alts);
@@ -1248,11 +1213,11 @@ function main() {
       rec.onerror = function (ev) {
         listening = false; updateMicUI();
         if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed') {
-          setVoiceBadge('Voice in: microphone blocked', 'warn');
+          setVoiceBadge('Microphone blocked', 'warn');
           showNote('The microphone is blocked in this preview frame. Open the HTML file directly in Chrome (or serve it locally) and allow the microphone. Until then, type commands below; they go through the exact same parser.');
           $('handsFree').checked = false;
         } else if (ev.error === 'no-speech') {
-          $('heard').textContent = 'No speech heard.';
+          $('heard').innerHTML = '<i>No speech heard.</i>'; $('hearing').textContent = 'No speech heard.';
         } else if (ev.error !== 'aborted') {
           showNote('Speech recognition error: ' + ev.error);
         }
@@ -1272,14 +1237,23 @@ function main() {
     listening = false; updateMicUI();
   }
   function updateMicUI() {
-    var b = $('micBtn');
-    b.classList.toggle('on', listening);
-    $('micLabel').textContent = listening ? 'Listening… (click to stop)' : 'Speak a move';
-    if (listening) setVoiceBadge('Voice: listening', 'live'); else if (SR) setVoiceBadge('Voice: ready (click Speak)', 'ok');
+    $('micBtn').classList.toggle('on', listening);
+    $('micBtn2').classList.toggle('on', listening);
+    $('micBtn').setAttribute('aria-label', listening ? 'Listening, click to stop' : 'Speak a move');
+    $('micBtn2').setAttribute('aria-label', listening ? 'Listening, click to stop' : 'Speak a move');
+    $('micLabel').textContent = listening ? 'Listening\u2026 click to stop' : 'Speak a move';
+    if (listening) setVoiceBadge('Listening', 'live'); else if (SR) setVoiceBadge('Voice ready', 'ok');
   }
-  $('micBtn').addEventListener('click', function () {
+  function micClick() {
     if (listening) { stopListening(); $('handsFree').checked = false; }
     else { wantListening = true; startListening(); }
+  }
+  $('micBtn').addEventListener('click', micClick);
+  $('micBtn2').addEventListener('click', micClick);
+  // "Try saying" chips send the phrase through the same path as speech.
+  document.addEventListener('click', function (ev) {
+    var c = ev.target.closest('.chip[data-say]'); if (!c) return;
+    handleUtterance(c.dataset.say, []);
   });
   $('handsFree').addEventListener('change', function () {
     if ($('handsFree').checked) { wantListening = true; if (!listening && isPlayersTurn()) startListening(); }
@@ -1306,6 +1280,7 @@ function main() {
     $('blindToggle').checked = on;
     $('boardWrap').hidden = on;
     $('blindPanel').hidden = !on;
+    $('stage').classList.toggle('is-blind', on);
     if (on) { selected = null; $('promoRow').hidden = true; }
     renderStatus();
   }
@@ -1341,11 +1316,19 @@ function main() {
 
   function updateLevel() {
     var n = parseInt($('level').value, 10);
-    $('levelOut').textContent = 'Level ' + n;
+    $('levelOut').textContent = n + ' / ' + LEVELS.length;
     $('levelHint').textContent = LEVELS[n - 1].hint;
+    $('levelDown').disabled = n <= 1;
+    $('levelUp').disabled = n >= LEVELS.length;
+    if (engine && engine.kind === 'stockfish') setEngineBadge('Stockfish 10 · Level ' + n, 'ok');
   }
-  $('level').addEventListener('input', updateLevel);
-  $('rate').addEventListener('input', function () { $('rateOut').textContent = parseFloat($('rate').value).toFixed(1) + '×'; });
+  function stepLevel(d) {
+    var n = Math.min(LEVELS.length, Math.max(1, parseInt($('level').value, 10) + d));
+    $('level').value = n; updateLevel();
+  }
+  $('levelDown').addEventListener('click', function () { stepLevel(-1); });
+  $('levelUp').addEventListener('click', function () { stepLevel(1); });
+  $('rate').addEventListener('input', function () { $('rateOut').textContent = parseFloat($('rate').value).toFixed(2) + '×'; });
 
   // ---------- Hot-reload snapshot (keeps a game alive across republishes) ----------
   function start(data) {
@@ -1364,7 +1347,7 @@ function main() {
     } else start({});
   } catch (e) { start({}); }
 
-  log('app', 'Ready. Click a piece, or use "Speak a move" / the text box. The log shows what was heard and what the app did with it.');
+  log('app', 'Ready. Click a piece, press the microphone, or type a command. Everything heard and everything said shows up here.');
 
   // Expose for tests and tinkering.
   window.__blindfold = { handleUtterance: handleUtterance, extractMoveIntent: extractMoveIntent, findMove: findMove, tokenize: tokenize, game: function () { return game; }, engine: function () { return engine; }, describeBoard: describeBoard };
