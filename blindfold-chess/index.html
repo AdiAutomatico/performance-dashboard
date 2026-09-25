@@ -1,0 +1,1385 @@
+<title>Blindfold Chess Trainer</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  :root {
+    --bg: #eff1ec;
+    --surface: #ffffff;
+    --surface-2: #f6f7f3;
+    --ink: #1c2620;
+    --muted: #5d6a62;
+    --line: #d3d9d1;
+    --accent: #1f6f4a;
+    --accent-ink: #ffffff;
+    --accent-soft: #dcefe4;
+    --listen: #c9582a;
+    --listen-soft: #f8e3d8;
+    --warn: #a86b12;
+    --warn-soft: #f7ecd4;
+    --danger: #b3382e;
+    --sq-light: #e9d9b8;
+    --sq-dark: #a97b55;
+    --sq-select: rgba(31,111,74,.55);
+    --sq-target: rgba(31,111,74,.35);
+    --sq-last: rgba(201,88,42,.35);
+    --piece-white: #fbf7ee;
+    --piece-black: #1a1512;
+    --font-body: "Libre Franklin", "Segoe UI", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #131815;
+      --surface: #1c221e;
+      --surface-2: #232a25;
+      --ink: #e6eae3;
+      --muted: #98a39b;
+      --line: #313b34;
+      --accent: #56b986;
+      --accent-ink: #0d1a12;
+      --accent-soft: #1e3328;
+      --listen: #e8794a;
+      --listen-soft: #3a2519;
+      --warn: #e0a54a;
+      --warn-soft: #34290f;
+      --danger: #e2665b;
+      --sq-light: #cdb88f;
+      --sq-dark: #8a6242;
+      --sq-select: rgba(86,185,134,.6);
+      --sq-target: rgba(86,185,134,.4);
+      --sq-last: rgba(232,121,74,.4);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #131815;
+    --surface: #1c221e;
+    --surface-2: #232a25;
+    --ink: #e6eae3;
+    --muted: #98a39b;
+    --line: #313b34;
+    --accent: #56b986;
+    --accent-ink: #0d1a12;
+    --accent-soft: #1e3328;
+    --listen: #e8794a;
+    --listen-soft: #3a2519;
+    --warn: #e0a54a;
+    --warn-soft: #34290f;
+    --danger: #e2665b;
+    --sq-light: #cdb88f;
+    --sq-dark: #8a6242;
+    --sq-select: rgba(86,185,134,.6);
+    --sq-target: rgba(86,185,134,.4);
+    --sq-last: rgba(232,121,74,.4);
+  }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.45;
+  }
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding-inline: 16px;
+    padding-block: 18px 40px;
+  }
+  header.top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px 20px;
+    margin-bottom: 14px;
+  }
+  header.top h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -.01em;
+  }
+  header.top .sub { color: var(--muted); font-size: 13px; }
+
+  .badges { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .badge {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .badge.ok { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+  .badge.warn { color: var(--warn); border-color: var(--warn); background: var(--warn-soft); }
+  .badge.live { color: var(--listen); border-color: var(--listen); background: var(--listen-soft); }
+
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: 22px;
+    align-items: start;
+  }
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: minmax(0, 1fr); }
+  }
+
+  .stage { display: grid; gap: 14px; }
+
+  .status-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 14px;
+  }
+  .turn {
+    font-size: 17px;
+    font-weight: 600;
+  }
+  .turn .who { color: var(--accent); }
+  .turn.danger .who { color: var(--danger); }
+
+  .toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+    font-weight: 500;
+  }
+  .toggle input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .toggle .knob {
+    width: 40px; height: 22px;
+    border-radius: 999px;
+    background: var(--line);
+    position: relative;
+    transition: background .15s;
+    flex: none;
+  }
+  .toggle .knob::after {
+    content: "";
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--surface);
+    box-shadow: 0 1px 2px rgba(0,0,0,.25);
+    transition: transform .15s;
+  }
+  .toggle input:checked + .knob { background: var(--accent); }
+  .toggle input:checked + .knob::after { transform: translateX(18px); }
+  .toggle input:focus-visible + .knob { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* Board */
+  .board-shell {
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) 18px;
+    gap: 4px;
+    max-width: 560px;
+    width: 100%;
+  }
+  .ranks, .files {
+    display: grid;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .ranks { grid-template-rows: repeat(8, 1fr); align-items: center; justify-items: center; }
+  .files { grid-column: 2; grid-template-columns: repeat(8, 1fr); justify-items: center; align-items: center; }
+  .board {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    aspect-ratio: 1 / 1;
+    max-width: 100%;
+    border: 2px solid var(--sq-dark);
+    border-radius: 4px;
+    overflow: hidden;
+    user-select: none;
+  }
+  .sq {
+    position: relative;
+    display: grid;
+    place-items: center;
+    font-size: clamp(22px, 6vw, 44px);
+    line-height: 1;
+    cursor: default;
+  }
+  .sq.light { background: var(--sq-light); }
+  .sq.dark { background: var(--sq-dark); }
+  .sq.last::before { content: ""; position: absolute; inset: 0; background: var(--sq-last); }
+  .sq.selected::before { content: ""; position: absolute; inset: 0; background: var(--sq-select); }
+  .sq.target::after {
+    content: "";
+    position: absolute;
+    width: 26%; height: 26%;
+    border-radius: 50%;
+    background: var(--sq-target);
+  }
+  .sq.target.has-piece::after {
+    width: 100%; height: 100%; border-radius: 0;
+    background: transparent;
+    box-shadow: inset 0 0 0 4px var(--sq-target);
+  }
+  .sq.movable { cursor: pointer; }
+  .sq .p { position: relative; z-index: 1; pointer-events: none; }
+  .sq .p.w { color: var(--piece-white); text-shadow: 0 0 2px #000, 0 1px 1px rgba(0,0,0,.6); }
+  .sq .p.b { color: var(--piece-black); text-shadow: 0 0 1px rgba(255,255,255,.35); }
+
+  /* Blindfold panel */
+  .blind {
+    max-width: 560px;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 6px;
+    border: 1px dashed var(--line);
+    background: var(--surface-2);
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    text-align: center;
+    padding: 24px;
+    gap: 10px;
+  }
+  .blind .big {
+    font-size: clamp(20px, 4vw, 30px);
+    font-weight: 800;
+    letter-spacing: -.01em;
+    text-wrap: balance;
+    max-width: 22ch;
+  }
+  .blind .lastsaid {
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 40ch;
+    text-wrap: balance;
+  }
+  .blind .eyebrow {
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  /* Voice bar */
+  .voice {
+    display: grid;
+    gap: 10px;
+    max-width: 560px;
+  }
+  .voice-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  button {
+    font: inherit;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    padding: 9px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  button:hover { background: var(--surface-2); }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  button.primary:hover { filter: brightness(1.05); }
+  button.mic {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 12px 18px;
+    font-size: 16px;
+    border-width: 2px;
+  }
+  button.mic .dot {
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--muted);
+    flex: none;
+  }
+  button.mic.on { border-color: var(--listen); background: var(--listen-soft); color: var(--listen); }
+  button.mic.on .dot { background: var(--listen); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: .5; } }
+  @media (prefers-reduced-motion: reduce) { button.mic.on .dot { animation: none; } }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+
+  .typed { display: flex; gap: 8px; flex-wrap: wrap; }
+  .typed input {
+    flex: 1 1 220px;
+    font: inherit;
+    padding: 9px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--ink);
+  }
+  .typed input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  .heard {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--muted);
+    min-height: 1.4em;
+  }
+  .heard b { color: var(--ink); font-weight: 600; }
+
+  .note {
+    font-size: 13px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: var(--warn-soft);
+    color: var(--warn);
+    border: 1px solid var(--warn);
+    max-width: 560px;
+  }
+  .note.info { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+
+  /* Sidebar */
+  .side { display: grid; gap: 14px; }
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .panel h2 {
+    margin: 0 0 10px;
+    font-size: 12px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .field { display: grid; gap: 6px; margin-bottom: 12px; }
+  .field:last-child { margin-bottom: 0; }
+  .field label.lbl { font-size: 13px; font-weight: 600; }
+  .field .hint { font-size: 12px; color: var(--muted); }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .seg label { padding: 7px 14px; cursor: pointer; font-weight: 600; font-size: 13px; }
+  .seg input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .seg input:checked + span { color: var(--accent-ink); }
+  .seg label:has(input:checked) { background: var(--accent); color: var(--accent-ink); }
+  .seg label:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: -2px; }
+  input[type=range] { width: 100%; accent-color: var(--accent); }
+  .range-row { display: flex; align-items: center; gap: 10px; }
+  .range-row output { font-family: var(--font-mono); font-size: 13px; min-width: 9ch; }
+  .check { display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; }
+  .check input { accent-color: var(--accent); width: 16px; height: 16px; margin: 0; }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .moves {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    display: grid;
+    grid-template-columns: 3.2ch 1fr 1fr;
+    gap: 3px 10px;
+    max-height: 220px;
+    overflow: auto;
+    font-variant-numeric: tabular-nums;
+  }
+  .moves .n { color: var(--muted); }
+  .moves .m.cur { color: var(--accent); font-weight: 600; }
+  .moves .empty { grid-column: 1 / -1; color: var(--muted); font-family: var(--font-body); }
+
+  .log { display: grid; gap: 8px; max-height: 300px; overflow: auto; font-size: 13px; }
+  .log .e { display: grid; grid-template-columns: 62px 1fr; gap: 8px; align-items: start; }
+  .log .k {
+    font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+    padding: 2px 6px; border-radius: 4px; text-align: center;
+    background: var(--surface-2); color: var(--muted);
+  }
+  .log .e.heard .k { background: var(--listen-soft); color: var(--listen); }
+  .log .e.engine .k { background: var(--accent-soft); color: var(--accent); }
+  .log .e.you .k { background: var(--surface-2); color: var(--ink); }
+  .log .e.err .k { background: var(--warn-soft); color: var(--warn); }
+  .log .t { overflow-wrap: anywhere; }
+
+  .say-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 13px; }
+  .say-list li { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; }
+  .say-list li span { flex-basis: 100%; }
+  .say-list code {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--ink);
+    background: var(--surface-2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-block;
+    width: fit-content;
+  }
+  .say-list span { color: var(--muted); }
+  details summary { cursor: pointer; font-weight: 600; font-size: 13px; }
+  details[open] summary { margin-bottom: 8px; }
+
+  .promo { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .promo button { font-size: 22px; padding: 4px 12px; }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Blindfold Chess Trainer</h1>
+      <div class="sub">Stockfish plays the moves. You play by clicking or by voice. Hide the board when you are ready.</div>
+    </div>
+    <div class="badges">
+      <span class="badge" id="engineBadge">Engine: loading…</span>
+      <span class="badge" id="voiceBadge">Voice: checking…</span>
+    </div>
+  </header>
+
+  <div class="layout">
+    <section class="stage">
+      <div class="status-row">
+        <div class="turn" id="turn">Your move <span class="who">(White)</span></div>
+        <label class="toggle">
+          <input type="checkbox" id="blindToggle">
+          <span class="knob"></span>
+          <span>Hide board (blindfold)</span>
+        </label>
+      </div>
+
+      <div id="boardWrap" class="board-shell">
+        <div class="ranks" id="ranks"></div>
+        <div class="board" id="board" aria-label="Chess board"></div>
+        <div class="files" id="files"></div>
+      </div>
+
+      <div id="blindPanel" class="blind" hidden>
+        <div class="eyebrow">Board hidden</div>
+        <div class="big" id="blindTurn">Your move as White</div>
+        <div class="lastsaid" id="blindLast">Say a move, or "read the board" to hear the position.</div>
+      </div>
+
+      <div id="promoRow" class="promo" hidden>
+        <span>Promote to:</span>
+        <button type="button" data-promo="q">♕</button>
+        <button type="button" data-promo="r">♖</button>
+        <button type="button" data-promo="b">♗</button>
+        <button type="button" data-promo="n">♘</button>
+      </div>
+
+      <div class="voice">
+        <div class="voice-row">
+          <button type="button" class="mic" id="micBtn"><span class="dot"></span><span id="micLabel">Speak a move</span></button>
+          <label class="check"><input type="checkbox" id="handsFree"> Keep listening after each move</label>
+        </div>
+        <div class="heard" id="heard"></div>
+        <div class="typed">
+          <input type="text" id="typed" placeholder='Or type what you would say, e.g. "knight to f3"' autocomplete="off" aria-label="Type a voice command">
+          <button type="button" id="typedGo">Send</button>
+        </div>
+        <div class="note" id="micNote" hidden></div>
+      </div>
+    </section>
+
+    <aside class="side">
+      <div class="panel">
+        <h2>Game</h2>
+        <div class="field">
+          <span class="lbl">You play</span>
+          <div class="seg" role="radiogroup" aria-label="Your color">
+            <label><input type="radio" name="color" value="w" id="colorW" checked><span>White</span></label>
+            <label><input type="radio" name="color" value="b" id="colorB"><span>Black</span></label>
+          </div>
+        </div>
+        <div class="field">
+          <label class="lbl" for="level">Engine strength</label>
+          <div class="range-row">
+            <input type="range" id="level" min="1" max="8" value="3">
+            <output id="levelOut" for="level">Level 3</output>
+          </div>
+          <div class="hint" id="levelHint">Stockfish skill 4, quick search. Roughly club beginner.</div>
+        </div>
+        <div class="btn-row">
+          <button type="button" class="primary" id="newGame">New game</button>
+          <button type="button" id="undoBtn">Take back</button>
+          <button type="button" id="readBtn">Read board aloud</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Voice settings</h2>
+        <div class="field">
+          <label class="check"><input type="checkbox" id="speakEngine" checked> Speak the engine's moves</label>
+        </div>
+        <div class="field">
+          <label class="check"><input type="checkbox" id="speakMine" checked> Repeat my move back to me</label>
+        </div>
+        <div class="field">
+          <label class="check"><input type="checkbox" id="confirmMoves"> Ask me to confirm before playing a move</label>
+          <div class="hint">With this on, say "yes" or "no" after the move is read back.</div>
+        </div>
+        <div class="field">
+          <label class="lbl" for="rate">Speech speed</label>
+          <div class="range-row">
+            <input type="range" id="rate" min="0.7" max="1.4" step="0.1" value="1">
+            <output id="rateOut" for="rate">1.0×</output>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Moves</h2>
+        <div class="moves" id="moves"><div class="empty">No moves yet.</div></div>
+      </div>
+
+      <div class="panel">
+        <h2>What happened</h2>
+        <div class="log" id="log"></div>
+      </div>
+
+      <div class="panel">
+        <details open>
+          <summary>What you can say</summary>
+          <ul class="say-list">
+            <li><code>knight f3</code> <code>knight to f3</code> <code>e4</code> <code>pawn to e4</code><span>Play a move.</span></li>
+            <li><code>bishop takes e5</code> <code>e2 to e4</code><span>Captures, or from-square to to-square.</span></li>
+            <li><code>castle kingside</code> <code>castle long</code><span>Castling.</span></li>
+            <li><code>e8 queen</code> <code>promote to rook</code><span>Promotion. Defaults to queen.</span></li>
+            <li><code>read the board</code><span>Hear every piece, both sides.</span></li>
+            <li><code>where is my king</code> <code>where are your rooks</code><span>Find pieces.</span></li>
+            <li><code>what can my knight do</code><span>Legal moves for a piece.</span></li>
+            <li><code>last move</code> <code>repeat</code><span>Hear the engine's move again.</span></li>
+            <li><code>take back</code> <code>new game</code> <code>hide board</code> <code>show board</code><span>Controls.</span></li>
+            <li><code>yes</code> <code>no</code><span>Confirm or cancel, when confirmation is on.</span></li>
+          </ul>
+        </details>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chess.js@0.10.3/chess.js"></script>
+<script>
+function main() {
+  'use strict';
+
+  // ---------- Settings & state ----------
+  var $ = function (id) { return document.getElementById(id); };
+  var LEVELS = [
+    { skill: 0,  depth: 1,  ms: 200,  hint: 'Stockfish skill 0, one-ply search. Makes real blunders.' },
+    { skill: 2,  depth: 2,  ms: 250,  hint: 'Stockfish skill 2. Casual beginner.' },
+    { skill: 4,  depth: 3,  ms: 300,  hint: 'Stockfish skill 4, quick search. Roughly club beginner.' },
+    { skill: 7,  depth: 4,  ms: 400,  hint: 'Stockfish skill 7. Solid casual player.' },
+    { skill: 10, depth: 6,  ms: 600,  hint: 'Stockfish skill 10. Club player.' },
+    { skill: 13, depth: 8,  ms: 800,  hint: 'Stockfish skill 13. Strong club player.' },
+    { skill: 17, depth: 12, ms: 1200, hint: 'Stockfish skill 17. Expert.' },
+    { skill: 20, depth: 16, ms: 1500, hint: 'Stockfish full strength (skill 20), 1.5 s per move.' }
+  ];
+  var PIECE_NAME = { p: 'pawn', n: 'knight', b: 'bishop', r: 'rook', q: 'queen', k: 'king' };
+  var GLYPH = { w: { k: '♔', q: '♕', r: '♖', b: '♗', n: '♘', p: '♙' }, b: { k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟' } };
+  var FILES = 'abcdefgh';
+
+  var game = new Chess();
+  var playerColor = 'w';
+  var thinking = false;
+  var selected = null;
+  var pendingPromotion = null;   // { from, to }
+  var pendingConfirm = null;     // verbose move waiting for yes/no
+  var lastAnnouncement = '';    // last thing spoken
+  var lastMoveText = '';        // last move announcement only
+  var blind = false;
+  var engine = null;             // { kind: 'stockfish'|'builtin', bestMove(fen, level) -> Promise<{from,to,promotion}> }
+
+  // ---------- Logging ----------
+  function log(kind, text) {
+    var el = document.createElement('div');
+    el.className = 'e ' + kind;
+    var k = document.createElement('span'); k.className = 'k';
+    k.textContent = { heard: 'heard', engine: 'engine', you: 'you', err: 'note', app: 'app' }[kind] || kind;
+    var t = document.createElement('span'); t.className = 't'; t.textContent = text;
+    el.appendChild(k); el.appendChild(t);
+    var box = $('log');
+    box.prepend(el);
+    while (box.children.length > 60) box.removeChild(box.lastChild);
+  }
+
+  // ---------- Speech output ----------
+  var speechBusy = false;
+  function say(text, opts) {
+    opts = opts || {};
+    lastAnnouncement = text;
+    $('blindLast').textContent = text;
+    if (!opts.quiet) log(opts.kind || 'engine', text);
+    if (!('speechSynthesis' in window)) return;
+    try {
+      // Pause the mic while we speak so we do not hear ourselves.
+      var resume = listening;
+      if (resume) stopListening(true);
+      var u = new SpeechSynthesisUtterance(text);
+      u.rate = parseFloat($('rate').value) || 1;
+      u.lang = 'en-US';
+      speechBusy = true;
+      var done = false;
+      var finish = function () {
+        if (done) return; done = true;
+        speechBusy = false;
+        if ((resume || $('handsFree').checked) && !game.game_over() && !thinking && isPlayersTurn()) startListening();
+      };
+      u.onend = u.onerror = finish;
+      setTimeout(finish, 3000 + text.length * 90);   // safety net if the browser never fires onend
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(u);
+    } catch (e) { speechBusy = false; }
+  }
+
+  function sqSpoken(sq) { return sq[0].toUpperCase() + ' ' + sq[1]; }
+  function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+  function describeMove(m, who) {
+    // m is a verbose move object from chess.js
+    var s;
+    if (m.flags.indexOf('k') >= 0) s = 'castles kingside';
+    else if (m.flags.indexOf('q') >= 0) s = 'castles queenside';
+    else {
+      s = PIECE_NAME[m.piece] + ' from ' + sqSpoken(m.from);
+      if (m.captured) s += ' takes ' + PIECE_NAME[m.captured] + ' on ' + sqSpoken(m.to);
+      else s += ' to ' + sqSpoken(m.to);
+      if (m.flags.indexOf('e') >= 0) s += ', en passant';
+      if (m.promotion) s += ', promotes to ' + PIECE_NAME[m.promotion];
+    }
+    var lead = who === 'engine' ? 'I play ' : (who === 'you' ? 'You play ' : '');
+    var out = lead + s + '.';
+    if (game.in_checkmate()) out += ' Checkmate.';
+    else if (game.in_check()) out += ' Check.';
+    return out;
+  }
+
+  function describeBoard() {
+    var parts = [];
+    ['w', 'b'].forEach(function (c) {
+      var by = { k: [], q: [], r: [], b: [], n: [], p: [] };
+      var b = game.board();
+      for (var r = 0; r < 8; r++) for (var f = 0; f < 8; f++) {
+        var p = b[r][f];
+        if (p && p.color === c) by[p.type].push(FILES[f] + (8 - r));
+      }
+      Object.keys(by).forEach(function (t) { by[t].sort(); });
+      var bits = [];
+      ['k', 'q', 'r', 'b', 'n', 'p'].forEach(function (t) {
+        if (!by[t].length) return;
+        var name = PIECE_NAME[t] + (by[t].length > 1 ? 's' : '');
+        bits.push(name + ' ' + by[t].map(sqSpoken).join(', '));
+      });
+      var label = (c === playerColor ? 'You' : 'I') + ' (' + (c === 'w' ? 'white' : 'black') + ')';
+      parts.push(label + ': ' + bits.join('; ') + '.');
+    });
+    parts.push((isPlayersTurn() ? 'Your' : 'My') + ' move.');
+    return parts.join(' ');
+  }
+
+  // ---------- Engine ----------
+  var ENGINE_URLS = [
+    'https://cdn.jsdelivr.net/npm/stockfish@10.0.2/src/stockfish.asm.js',
+    'https://cdn.jsdelivr.net/npm/stockfish.js@10.0.2/stockfish.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/stockfish.js/10.0.2/stockfish.js'
+  ];
+
+  function loadStockfish(urls) {
+    return new Promise(function (resolve) {
+      var i = 0;
+      function tryNext() {
+        if (i >= urls.length) return resolve(null);
+        var url = urls[i++];
+        var w, timer;
+        try {
+          var blob = new Blob(['importScripts(' + JSON.stringify(url) + ');'], { type: 'text/javascript' });
+          w = new Worker(URL.createObjectURL(blob));
+        } catch (e) { return tryNext(); }
+        timer = setTimeout(function () { try { w.terminate(); } catch (e) {} tryNext(); }, 25000);
+        w.onerror = function () { clearTimeout(timer); try { w.terminate(); } catch (e) {} tryNext(); };
+        w.onmessage = function (ev) {
+          var line = String(ev.data);
+          if (line.indexOf('uciok') === 0) {
+            clearTimeout(timer);
+            w.onerror = null;
+            resolve({ worker: w, url: url });
+          }
+        };
+        w.postMessage('uci');
+      }
+      tryNext();
+    });
+  }
+
+  function makeStockfishEngine(worker) {
+    // Stockfish answers every "go" with exactly one "bestmove", so a FIFO of
+    // resolvers keeps replies matched to requests even if a search is stopped.
+    var pending = [];
+    worker.onmessage = function (ev) {
+      var line = String(ev.data);
+      if (line.indexOf('bestmove') === 0 && pending.length) {
+        var mv = line.split(/\s+/)[1];
+        var r = pending.shift();
+        if (!mv || mv === '(none)') return r(null);
+        r({ from: mv.slice(0, 2), to: mv.slice(2, 4), promotion: mv.length > 4 ? mv[4] : undefined });
+      }
+    };
+    function send(cmd) { worker.postMessage(cmd); }
+    send('setoption name UCI_Chess960 value false');
+    return {
+      kind: 'stockfish',
+      newGame: function () { if (pending.length) send('stop'); send('ucinewgame'); send('isready'); },
+      bestMove: function (fen, level) {
+        return new Promise(function (resolve) {
+          if (pending.length) send('stop');
+          pending.push(resolve);
+          send('setoption name Skill Level value ' + level.skill);
+          send('position fen ' + fen);
+          send('go depth ' + level.depth + ' movetime ' + level.ms);
+        });
+      }
+    };
+  }
+
+  // Tiny fallback engine so the mockup still plays if the CDN is unreachable.
+  function makeBuiltinEngine() {
+    var VAL = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 0 };
+    function evalBoard(g) {
+      var b = g.board(), s = 0;
+      for (var r = 0; r < 8; r++) for (var f = 0; f < 8; f++) {
+        var p = b[r][f]; if (!p) continue;
+        var v = VAL[p.type] + ((f >= 2 && f <= 5 && r >= 2 && r <= 5) ? 8 : 0);
+        s += p.color === 'w' ? v : -v;
+      }
+      return s;
+    }
+    function negamax(g, depth, alpha, beta, sign) {
+      if (g.in_checkmate()) return -100000;
+      if (g.in_draw() || g.in_stalemate()) return 0;
+      if (depth === 0) return sign * evalBoard(g);
+      var moves = g.moves({ verbose: true }), best = -Infinity;
+      for (var i = 0; i < moves.length; i++) {
+        g.move(moves[i]);
+        var v = -negamax(g, depth - 1, -beta, -alpha, -sign);
+        g.undo();
+        if (v > best) best = v;
+        if (best > alpha) alpha = best;
+        if (alpha >= beta) break;
+      }
+      return best;
+    }
+    return {
+      kind: 'builtin',
+      newGame: function () {},
+      bestMove: function (fen, level) {
+        return new Promise(function (resolve) {
+          setTimeout(function () {
+            var g = new Chess(fen);
+            var moves = g.moves({ verbose: true });
+            if (!moves.length) return resolve(null);
+            var idx = LEVELS.indexOf(level);
+            var depth = idx <= 2 ? 1 : (idx <= 5 ? 2 : 3);
+            var sign = g.turn() === 'w' ? 1 : -1;
+            var scored = moves.map(function (m) {
+              g.move(m);
+              var v = -negamax(g, depth - 1, -Infinity, Infinity, -sign);
+              g.undo();
+              return { m: m, v: v + Math.random() * 20 };
+            }).sort(function (a, b) { return b.v - a.v; });
+            var slack = Math.max(0, 5 - idx);          // low levels pick from a wider pool
+            var pick = scored[Math.floor(Math.random() * Math.min(scored.length, 1 + slack))].m;
+            resolve({ from: pick.from, to: pick.to, promotion: pick.promotion });
+          }, 150);
+        });
+      }
+    };
+  }
+
+  function setEngineBadge(text, cls) {
+    var b = $('engineBadge'); b.textContent = text; b.className = 'badge ' + (cls || '');
+  }
+
+  loadStockfish(ENGINE_URLS).then(function (res) {
+    if (res) {
+      engine = makeStockfishEngine(res.worker);
+      setEngineBadge('Engine: Stockfish 10', 'ok');
+      log('app', 'Stockfish loaded from ' + res.url.replace(/^https:\/\//, '') + '.');
+    } else {
+      engine = makeBuiltinEngine();
+      setEngineBadge('Engine: built-in fallback (weak)', 'warn');
+      log('err', 'Could not load Stockfish from a CDN. Using a small built-in engine so you can still try the interface.');
+    }
+    engine.newGame();
+    if (!isPlayersTurn()) engineMove();
+  });
+
+  // ---------- Board rendering ----------
+  function buildCoords() {
+    var ranks = $('ranks'), files = $('files');
+    ranks.innerHTML = ''; files.innerHTML = '';
+    for (var i = 0; i < 8; i++) {
+      var r = document.createElement('div'); r.textContent = playerColor === 'w' ? 8 - i : i + 1; ranks.appendChild(r);
+      var f = document.createElement('div'); f.textContent = playerColor === 'w' ? FILES[i] : FILES[7 - i]; files.appendChild(f);
+    }
+  }
+
+  function renderBoard() {
+    var board = $('board');
+    board.innerHTML = '';
+    var b = game.board();
+    var hist = game.history({ verbose: true });
+    var last = hist.length ? hist[hist.length - 1] : null;
+    var targets = {};
+    if (selected) game.moves({ square: selected, verbose: true }).forEach(function (m) { targets[m.to] = true; });
+    for (var i = 0; i < 64; i++) {
+      var row = playerColor === 'w' ? Math.floor(i / 8) : 7 - Math.floor(i / 8);
+      var col = playerColor === 'w' ? i % 8 : 7 - (i % 8);
+      var sqName = FILES[col] + (8 - row);
+      var p = b[row][col];
+      var el = document.createElement('div');
+      el.className = 'sq ' + (((row + col) % 2 === 0) ? 'light' : 'dark');
+      el.dataset.sq = sqName;
+      if (last && (last.from === sqName || last.to === sqName)) el.classList.add('last');
+      if (selected === sqName) el.classList.add('selected');
+      if (targets[sqName]) { el.classList.add('target'); if (p) el.classList.add('has-piece'); }
+      if (p) {
+        var span = document.createElement('span');
+        span.className = 'p ' + p.color;
+        span.textContent = GLYPH[p.color][p.type];
+        el.appendChild(span);
+        if (p.color === playerColor && isPlayersTurn() && !thinking) el.classList.add('movable');
+      }
+      if (targets[sqName]) el.classList.add('movable');
+      board.appendChild(el);
+    }
+  }
+
+  function renderMoves() {
+    var box = $('moves');
+    box.innerHTML = '';
+    var h = game.history();
+    if (!h.length) { box.innerHTML = '<div class="empty">No moves yet.</div>'; return; }
+    for (var i = 0; i < h.length; i += 2) {
+      var n = document.createElement('div'); n.className = 'n'; n.textContent = (i / 2 + 1) + '.'; box.appendChild(n);
+      var w = document.createElement('div'); w.className = 'm' + (i === h.length - 1 ? ' cur' : ''); w.textContent = h[i]; box.appendChild(w);
+      var bl = document.createElement('div'); bl.className = 'm' + (i + 1 === h.length - 1 ? ' cur' : ''); bl.textContent = h[i + 1] || ''; box.appendChild(bl);
+    }
+    box.scrollTop = box.scrollHeight;
+  }
+
+  function colorName(c) { return c === 'w' ? 'White' : 'Black'; }
+  function isPlayersTurn() { return game.turn() === playerColor; }
+
+  function renderStatus() {
+    var t = $('turn'), text, danger = false;
+    if (game.in_checkmate()) { text = 'Checkmate. <span class="who">' + (isPlayersTurn() ? 'Engine wins' : 'You win') + '</span>'; danger = isPlayersTurn(); }
+    else if (game.in_stalemate()) text = 'Stalemate. <span class="who">Draw</span>';
+    else if (game.in_draw()) text = 'Draw <span class="who">(50 moves or repetition)</span>';
+    else if (thinking) text = 'Engine is thinking <span class="who">(' + colorName(game.turn()) + ')</span>';
+    else if (pendingConfirm) { text = 'Confirm: <span class="who">' + pendingConfirm.san + '?</span> Say yes or no'; }
+    else if (isPlayersTurn()) { text = 'Your move <span class="who">(' + colorName(playerColor) + ')</span>' + (game.in_check() ? ' – you are in check' : ''); danger = game.in_check(); }
+    else text = 'Engine to move';
+    t.innerHTML = text;
+    t.className = 'turn' + (danger ? ' danger' : '');
+    $('blindTurn').textContent = t.textContent;
+  }
+
+  function renderAll() { renderBoard(); renderMoves(); renderStatus(); }
+
+  // ---------- Making moves ----------
+  function commitPlayerMove(mv) {
+    // mv: { from, to, promotion? } or SAN string
+    var made = game.move(mv);
+    if (!made) return false;
+    selected = null; pendingPromotion = null; pendingConfirm = null;
+    $('promoRow').hidden = true;
+    renderAll();
+    var text = describeMove(made, 'you');
+    lastMoveText = text;
+    if ($('speakMine').checked) say(text, { kind: 'you' }); else { lastAnnouncement = text; log('you', text); $('blindLast').textContent = text; }
+    if (game.game_over()) { announceGameOver(); return true; }
+    engineMove();
+    return true;
+  }
+
+  function announceGameOver() {
+    var text;
+    if (game.in_checkmate()) text = isPlayersTurn() ? 'Checkmate. I win this one.' : 'Checkmate. You win. Well played.';
+    else if (game.in_stalemate()) text = 'Stalemate. The game is a draw.';
+    else if (game.in_threefold_repetition()) text = 'Draw by repetition.';
+    else if (game.insufficient_material()) text = 'Draw. Not enough material to mate.';
+    else text = 'The game is a draw.';
+    say(text);
+  }
+
+  function engineMove() {
+    if (!engine || game.game_over() || isPlayersTurn()) return;
+    thinking = true;
+    renderStatus(); renderBoard();
+    var level = LEVELS[parseInt($('level').value, 10) - 1];
+    var fen = game.fen();
+    engine.bestMove(fen, level).then(function (mv) {
+      thinking = false;
+      if (game.fen() !== fen) return; // game changed while thinking (undo / new game)
+      if (!mv) { renderAll(); return; }
+      var made = game.move({ from: mv.from, to: mv.to, promotion: mv.promotion || 'q' });
+      if (!made) { log('err', 'Engine suggested an illegal move (' + mv.from + mv.to + '). Ignoring.'); renderAll(); return; }
+      renderAll();
+      var text = describeMove(made, 'engine');
+      lastMoveText = text;
+      if ($('speakEngine').checked) say(text); else { lastAnnouncement = text; log('engine', text); $('blindLast').textContent = text; }
+      if (game.game_over()) setTimeout(announceGameOver, 400);
+    });
+  }
+
+  // Click-to-move
+  $('board').addEventListener('click', function (ev) {
+    var el = ev.target.closest('.sq'); if (!el) return;
+    if (thinking || !isPlayersTurn() || game.game_over()) return;
+    var sq = el.dataset.sq;
+    var piece = game.get(sq);
+    if (selected) {
+      var legal = game.moves({ square: selected, verbose: true }).filter(function (m) { return m.to === sq; });
+      if (legal.length) {
+        if (legal[0].promotion) { pendingPromotion = { from: selected, to: sq }; $('promoRow').hidden = false; return; }
+        commitPlayerMove({ from: selected, to: sq });
+        return;
+      }
+    }
+    if (piece && piece.color === playerColor) { selected = (selected === sq) ? null : sq; }
+    else selected = null;
+    $('promoRow').hidden = true; pendingPromotion = null;
+    renderBoard();
+  });
+  $('promoRow').addEventListener('click', function (ev) {
+    var b = ev.target.closest('button[data-promo]'); if (!b || !pendingPromotion) return;
+    commitPlayerMove({ from: pendingPromotion.from, to: pendingPromotion.to, promotion: b.dataset.promo });
+  });
+
+  // ---------- Voice command parsing ----------
+  var PIECE_WORDS = {
+    knight: 'n', night: 'n', nite: 'n', knights: 'n', nights: 'n', horse: 'n', horses: 'n',
+    bishop: 'b', bishops: 'b', biship: 'b',
+    rook: 'r', rooks: 'r', rock: 'r', rocks: 'r', tower: 'r', towers: 'r', brook: 'r',
+    queen: 'q', queens: 'q', quinn: 'q',
+    king: 'k', kings: 'k',
+    pawn: 'p', pawns: 'p', pon: 'p', pun: 'p', porn: 'p', pond: 'p', prawn: 'p'
+  };
+  var FILE_WORDS = {
+    a: 'a', ay: 'a', alpha: 'a', eh: 'a',
+    b: 'b', be: 'b', bee: 'b', bravo: 'b',
+    c: 'c', see: 'c', sea: 'c', cee: 'c', charlie: 'c',
+    d: 'd', de: 'd', dee: 'd', delta: 'd',
+    e: 'e', ee: 'e', echo: 'e',
+    f: 'f', ef: 'f', eff: 'f', foxtrot: 'f',
+    g: 'g', gee: 'g', golf: 'g', jee: 'g',
+    h: 'h', aitch: 'h', hotel: 'h', age: 'h', each: 'h'
+  };
+  var RANK_WORDS = {
+    '1': '1', one: '1', won: '1',
+    '2': '2', two: '2', to: '2', too: '2',
+    '3': '3', three: '3', free: '3', tree: '3',
+    '4': '4', four: '4', 'for': '4', fore: '4',
+    '5': '5', five: '5',
+    '6': '6', six: '6', sex: '6',
+    '7': '7', seven: '7',
+    '8': '8', eight: '8', ate: '8'
+  };
+  var CAPTURE_WORDS = { takes: 1, take: 1, took: 1, captures: 1, capture: 1, x: 1, times: 1, taxes: 1 };
+
+  function tokenize(text) {
+    var t = String(text).toLowerCase()
+      .replace(/[’']/g, '')
+      .replace(/-/g, ' ')
+      .replace(/[^a-z0-9 ]+/g, ' ')
+      .replace(/\b([a-h])\s*([1-8])\b/g, '$1$2')      // "e 4" -> "e4"
+      .trim();
+    return t ? t.split(/\s+/) : [];
+  }
+
+  // Turn a token stream into { piece, squares[], capture, promo, castle }
+  function extractMoveIntent(tokens) {
+    var intent = { piece: null, squares: [], capture: false, promo: null, castle: null, promoteWord: false };
+    var joined = tokens.join(' ');
+    if (/\b(castle|castles|castling|cast)\b/.test(joined) || /\bo\s*o\b/.test(joined)) {
+      if (/\b(king|kings|kingside|short)\b/.test(joined) || /\bk\b/.test(joined)) intent.castle = 'k';
+      else if (/\b(queen|queens|queenside|long)\b/.test(joined) || /\bq\b/.test(joined)) intent.castle = 'q';
+      else intent.castle = '?';
+      return intent;
+    }
+    for (var i = 0; i < tokens.length; i++) {
+      var w = tokens[i];
+      if (/^[a-h][1-8]$/.test(w)) { intent.squares.push(w); continue; }
+      // file word followed by rank word
+      if (FILE_WORDS[w] !== undefined && i + 1 < tokens.length && RANK_WORDS[tokens[i + 1]] !== undefined) {
+        intent.squares.push(FILE_WORDS[w] + RANK_WORDS[tokens[i + 1]]);
+        i++; continue;
+      }
+      if (/^(promote|promotes|promoting|promotion|equals|equal|becomes|make)$/.test(w)) { intent.promoteWord = true; continue; }
+      if (PIECE_WORDS[w]) {
+        var pc = PIECE_WORDS[w];
+        if (intent.squares.length) {
+          // a piece named after the destination square is a promotion choice ("e8 queen")
+          if (pc !== 'k' && pc !== 'p') intent.promo = pc;
+        } else if (intent.capture && !intent.piece) {
+          // "takes pawn on e5": the piece after the capture word is the victim, not the mover
+          intent.captured = pc;
+        } else if (!intent.piece) intent.piece = pc;
+        continue;
+      }
+      if (CAPTURE_WORDS[w]) { intent.capture = true; continue; }
+    }
+    return intent;
+  }
+
+  function findMove(intent) {
+    var legal = game.moves({ verbose: true });
+    var c;
+    if (intent.castle) {
+      c = legal.filter(function (m) { return intent.castle === '?' ? /[kq]/.test(m.flags) : m.flags.indexOf(intent.castle) >= 0; });
+      if (c.length === 1) return { move: c[0] };
+      if (c.length > 1) return { ambiguous: c, why: 'Which way? Say castle kingside or castle queenside.' };
+      return { error: 'Castling is not legal right now.' };
+    }
+    if (!intent.squares.length) return null;
+    if (intent.squares.length >= 2) {
+      var from = intent.squares[0], to = intent.squares[1];
+      c = legal.filter(function (m) { return m.from === from && m.to === to; });
+      if (!c.length) return { error: 'No legal move from ' + sqSpoken(from) + ' to ' + sqSpoken(to) + '.' };
+      return pickPromotion(c, intent);
+    }
+    var to = intent.squares[0];
+    var toMoves = legal.filter(function (m) { return m.to === to; });
+    if (!toMoves.length) return { error: 'Nothing can move to ' + sqSpoken(to) + '.' };
+    if (intent.piece) {
+      c = toMoves.filter(function (m) { return m.piece === intent.piece; });
+      if (!c.length) return { error: 'No ' + PIECE_NAME[intent.piece] + ' can move to ' + sqSpoken(to) + '. ' + listAlternatives(toMoves) };
+    } else {
+      c = toMoves.filter(function (m) { return m.piece === 'p'; });
+      if (!c.length) c = toMoves;   // "f3" with no pawn move there: accept the only piece that can
+    }
+    if (intent.capture) {
+      var caps = c.filter(function (m) { return !!m.captured; });
+      if (caps.length) c = caps;
+    }
+    c = uniqueByFrom(c);
+    if (c.length === 1) return pickPromotion(legal.filter(function (m) { return m.from === c[0].from && m.to === c[0].to; }), intent);
+    if (c.length > 1) {
+      var name = PIECE_NAME[c[0].piece];
+      return { ambiguous: c, why: 'Which ' + name + '? ' + c.map(function (m) { return 'the one on ' + sqSpoken(m.from); }).join(' or ') + '. Say for example ' + c[0].from + ' to ' + to + '.' };
+    }
+    return { error: 'I could not match that to a legal move.' };
+  }
+  function uniqueByFrom(moves) {
+    var seen = {}, out = [];
+    moves.forEach(function (m) { if (!seen[m.from]) { seen[m.from] = 1; out.push(m); } });
+    return out;
+  }
+  function listAlternatives(toMoves) {
+    var names = uniqueByFrom(toMoves).map(function (m) { return PIECE_NAME[m.piece] + ' from ' + sqSpoken(m.from); });
+    return 'You could play ' + names.join(', or ') + '.';
+  }
+  function pickPromotion(candidates, intent) {
+    if (!candidates.length) return { error: 'That move is not legal.' };
+    if (!candidates[0].promotion) return { move: candidates[0] };
+    var want = intent.promo || 'q';
+    var m = candidates.filter(function (x) { return x.promotion === want; })[0] || candidates[0];
+    return { move: m };
+  }
+
+  // Non-move commands. Returns true if handled.
+  function handleCommand(text) {
+    var tokens = tokenize(text), joined = tokens.join(' ');
+    if (!tokens.length) return true;
+
+    // Confirmation flow
+    if (pendingConfirm) {
+      if (/^(yes|yeah|yep|yup|confirm|confirmed|correct|ok|okay|go|do it|play it|sure|right)\b/.test(joined)) {
+        var mv = pendingConfirm; pendingConfirm = null;
+        commitPlayerMove({ from: mv.from, to: mv.to, promotion: mv.promotion });
+        return true;
+      }
+      if (/^(no|nope|nah|cancel|wrong|never mind|nevermind|stop|undo)\b/.test(joined)) {
+        pendingConfirm = null; renderStatus();
+        say('Cancelled. Your move.');
+        return true;
+      }
+      // anything else replaces the pending move below
+      pendingConfirm = null;
+    }
+
+    if (/\b(new game|restart|reset|start over|play again)\b/.test(joined)) { newGame(); return true; }
+    if (/\b(undo|take back|takeback|take that back|go back)\b/.test(joined)) { undo(); return true; }
+    if (/\b(hide|blindfold on|blindfold mode|blind mode|close)\b/.test(joined) && /\b(board|blindfold|blind)\b/.test(joined)) { setBlind(true); say('Board hidden.'); return true; }
+    if (/\b(show|reveal|display|open|unhide|blindfold off)\b/.test(joined) && /\b(board|blindfold)\b/.test(joined)) { setBlind(false); say('Board shown.'); return true; }
+    if (/\b(read|describe|announce|tell me|say)\b/.test(joined) && /\b(board|position|pieces)\b/.test(joined) || /^(position|board)$/.test(joined)) { say(describeBoard()); return true; }
+    if (/\b(last move|previous move|what did you (play|move|do))\b/.test(joined)) { say(lastMoveText || 'Nothing has been played yet.'); return true; }
+    if (/\b(repeat|again|what was that|say that again)\b/.test(joined)) { say(lastAnnouncement || 'Nothing to repeat yet.'); return true; }
+    if (/\bwhose (move|turn)\b|\bmy turn\b|\bwho.s (move|turn)\b/.test(joined)) { say(isPlayersTurn() ? 'It is your move.' : 'I am thinking.'); return true; }
+    if (/\b(help|what can i say|commands)\b/.test(joined)) {
+      say('Say a move like knight to f3, or e4, or bishop takes e5, or castle kingside. Ask where is my king, read the board, what can my knight do, last move, take back, new game, hide board, or show board.');
+      return true;
+    }
+    if (/\bresign\b/.test(joined)) { say('You resign. I accept. Say new game to play again.'); log('app', 'You resigned.'); return true; }
+    if (/\bwhere\b/.test(joined)) { say(whereIs(tokens)); return true; }
+    if (/\b(legal|possible|what can|which moves|what moves|moves for|options)\b/.test(joined)) { say(legalMovesFor(tokens)); return true; }
+    if (/^(stop|stop listening|quiet|pause)\b/.test(joined)) { $('handsFree').checked = false; stopListening(); return true; }
+    return false;
+  }
+
+  function colorFromTokens(tokens) {
+    var j = tokens.join(' ');
+    if (/\b(white|whites)\b/.test(j)) return 'w';
+    if (/\b(black|blacks)\b/.test(j)) return 'b';
+    if (/\b(my|mine|i)\b/.test(j)) return playerColor;
+    if (/\b(your|yours|you|computer|computers|engine|engines|its)\b/.test(j)) return playerColor === 'w' ? 'b' : 'w';
+    return null;
+  }
+  function pieceFromTokens(tokens) {
+    for (var i = 0; i < tokens.length; i++) if (PIECE_WORDS[tokens[i]]) return PIECE_WORDS[tokens[i]];
+    return null;
+  }
+  function squaresOf(color, type) {
+    var out = [], b = game.board();
+    for (var r = 0; r < 8; r++) for (var f = 0; f < 8; f++) {
+      var p = b[r][f];
+      if (p && p.color === color && p.type === type) out.push(FILES[f] + (8 - r));
+    }
+    return out;
+  }
+  function whereIs(tokens) {
+    var type = pieceFromTokens(tokens);
+    if (!type) return 'Which piece? For example, where is my king.';
+    var color = colorFromTokens(tokens);
+    var colors = color ? [color] : ['w', 'b'];
+    return colors.map(function (c) {
+      var sq = squaresOf(c, type);
+      var owner = c === playerColor ? 'Your' : 'My';
+      if (!sq.length) return owner + ' ' + PIECE_NAME[type] + (type === 'k' ? '' : 's') + ': none left.';
+      if (sq.length === 1) return owner + ' ' + PIECE_NAME[type] + ' is on ' + sqSpoken(sq[0]) + '.';
+      return owner + ' ' + PIECE_NAME[type] + 's are on ' + sq.map(sqSpoken).join(' and ') + '.';
+    }).join(' ');
+  }
+  function legalMovesFor(tokens) {
+    if (!isPlayersTurn()) return 'It is not your move yet.';
+    var type = pieceFromTokens(tokens);
+    var legal = game.moves({ verbose: true });
+    if (type) legal = legal.filter(function (m) { return m.piece === type; });
+    if (!legal.length) return type ? 'Your ' + PIECE_NAME[type] + ' has no legal moves.' : 'You have no legal moves.';
+    var byFrom = {};
+    legal.forEach(function (m) { (byFrom[m.from] = byFrom[m.from] || []).push(m); });
+    var parts = Object.keys(byFrom).slice(0, 6).map(function (from) {
+      var ms = byFrom[from];
+      var tos = [];
+      ms.forEach(function (m) { var s = sqSpoken(m.to); if (tos.indexOf(s) < 0) tos.push(s); });
+      return cap(PIECE_NAME[ms[0].piece]) + ' on ' + sqSpoken(from) + ' can go to ' + tos.slice(0, 8).join(', ');
+    });
+    var more = Object.keys(byFrom).length > 6 ? ', and more' : '';
+    return parts.join('. ') + more + '.';
+  }
+
+  // Main entry point for anything heard or typed. `alternatives` lets us try
+  // the recognizer's other guesses if the first one fails to parse.
+  function handleUtterance(text, alternatives) {
+    var all = [text].concat(alternatives || []).filter(Boolean);
+    $('heard').innerHTML = 'Heard: <b>' + escapeHtml(text) + '</b>';
+    log('heard', text);
+    if (handleCommand(text)) return;
+    if (game.game_over()) { say('The game is over. Say new game to play again.'); return; }
+    if (thinking || !isPlayersTurn()) { say('One moment, I am still thinking.'); return; }
+
+    var firstError = null, firstAmbiguous = null;
+    for (var i = 0; i < all.length; i++) {
+      var intent = extractMoveIntent(tokenize(all[i]));
+      var res = findMove(intent);
+      if (!res) continue;
+      if (res.move) {
+        if (i > 0) log('app', 'Matched using alternative transcript: "' + all[i] + '"');
+        return playParsedMove(res.move);
+      }
+      if (res.ambiguous && !firstAmbiguous) firstAmbiguous = res;
+      if (res.error && !firstError) firstError = res;
+    }
+    if (firstAmbiguous) { say(firstAmbiguous.why); renderStatus(); return; }
+    if (firstError) { say(firstError.error); return; }
+    say('I did not catch a move in "' + text + '". Try something like knight to f3.');
+  }
+
+  function playParsedMove(m) {
+    $('heard').innerHTML += ' → <b>' + escapeHtml(m.san) + '</b>';
+    if ($('confirmMoves').checked) {
+      pendingConfirm = m;
+      renderStatus();
+      var d = describeMove(m, '').replace(/\.$/, '');
+      say(cap(d) + '. Yes or no?', { kind: 'app' });
+      return;
+    }
+    commitPlayerMove({ from: m.from, to: m.to, promotion: m.promotion });
+  }
+
+  function escapeHtml(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+  // ---------- Speech input ----------
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var rec = null, listening = false, wantListening = false;
+
+  function setVoiceBadge(text, cls) { var b = $('voiceBadge'); b.textContent = text; b.className = 'badge ' + (cls || ''); }
+  function showNote(text, info) { var n = $('micNote'); n.textContent = text; n.className = 'note' + (info ? ' info' : ''); n.hidden = !text; }
+
+  if (!SR) {
+    setVoiceBadge('Voice in: not supported here', 'warn');
+    showNote('This browser has no speech recognition. Chrome or Edge on desktop or Android work best. You can still type commands below to see exactly how voice input will behave.');
+  } else {
+    setVoiceBadge('Voice: ready (click Speak)', 'ok');
+  }
+
+  function startListening() {
+    if (!SR) { showNote('Speech recognition is not available in this browser. Type the command instead.'); return; }
+    if (listening || speechBusy) return;
+    try {
+      rec = new SR();
+      rec.lang = 'en-US';
+      rec.interimResults = true;
+      rec.maxAlternatives = 4;
+      rec.onstart = function () { listening = true; wantListening = true; updateMicUI(); };
+      rec.onresult = function (ev) {
+        var last = ev.results[ev.results.length - 1];
+        if (!last.isFinal) { $('heard').innerHTML = 'Hearing: <i>' + escapeHtml(last[0].transcript) + '</i>'; return; }
+        var alts = [];
+        for (var i = 1; i < last.length; i++) alts.push(last[i].transcript);
+        handleUtterance(last[0].transcript.trim(), alts);
+      };
+      rec.onerror = function (ev) {
+        listening = false; updateMicUI();
+        if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed') {
+          setVoiceBadge('Voice in: microphone blocked', 'warn');
+          showNote('The microphone is blocked in this preview frame. Open the HTML file directly in Chrome (or serve it locally) and allow the microphone. Until then, type commands below; they go through the exact same parser.');
+          $('handsFree').checked = false;
+        } else if (ev.error === 'no-speech') {
+          $('heard').textContent = 'No speech heard.';
+        } else if (ev.error !== 'aborted') {
+          showNote('Speech recognition error: ' + ev.error);
+        }
+      };
+      rec.onend = function () {
+        listening = false; updateMicUI();
+        if ($('handsFree').checked && wantListening && !speechBusy && !thinking && !game.game_over() && isPlayersTurn()) {
+          setTimeout(function () { if (!listening && !speechBusy) startListening(); }, 250);
+        }
+      };
+      rec.start();
+    } catch (e) { listening = false; updateMicUI(); showNote('Could not start the microphone: ' + e.message); }
+  }
+  function stopListening(silent) {
+    if (!silent) wantListening = false;
+    if (rec) { try { rec.onend = null; rec.abort(); } catch (e) {} }
+    listening = false; updateMicUI();
+  }
+  function updateMicUI() {
+    var b = $('micBtn');
+    b.classList.toggle('on', listening);
+    $('micLabel').textContent = listening ? 'Listening… (click to stop)' : 'Speak a move';
+    if (listening) setVoiceBadge('Voice: listening', 'live'); else if (SR) setVoiceBadge('Voice: ready (click Speak)', 'ok');
+  }
+  $('micBtn').addEventListener('click', function () {
+    if (listening) { stopListening(); $('handsFree').checked = false; }
+    else { wantListening = true; startListening(); }
+  });
+  $('handsFree').addEventListener('change', function () {
+    if ($('handsFree').checked) { wantListening = true; if (!listening && isPlayersTurn()) startListening(); }
+    else stopListening();
+  });
+
+  // Typed commands use the same path as speech.
+  function sendTyped() {
+    var v = $('typed').value.trim(); if (!v) return;
+    $('typed').value = '';
+    handleUtterance(v, []);
+  }
+  $('typedGo').addEventListener('click', sendTyped);
+  $('typed').addEventListener('keydown', function (ev) { if (ev.key === 'Enter') { ev.preventDefault(); sendTyped(); } });
+
+  // Hold the space bar to talk (only when focus is not in the text box).
+  document.addEventListener('keydown', function (ev) {
+    if (ev.code === 'Space' && ev.target === document.body && !ev.repeat) { ev.preventDefault(); if (!listening) { wantListening = true; startListening(); } }
+  });
+
+  // ---------- Controls ----------
+  function setBlind(on) {
+    blind = on;
+    $('blindToggle').checked = on;
+    $('boardWrap').hidden = on;
+    $('blindPanel').hidden = !on;
+    if (on) { selected = null; $('promoRow').hidden = true; }
+    renderStatus();
+  }
+  $('blindToggle').addEventListener('change', function () { setBlind(this.checked); log('app', this.checked ? 'Board hidden.' : 'Board shown.'); });
+
+  function newGame() {
+    game = new Chess();
+    selected = null; pendingConfirm = null; pendingPromotion = null; thinking = false;
+    playerColor = $('colorB').checked ? 'b' : 'w';
+    buildCoords();
+    renderAll();
+    if (engine) engine.newGame();
+    $('heard').textContent = '';
+    say('New game. You are ' + colorName(playerColor).toLowerCase() + '. ' + (playerColor === 'w' ? 'Your move.' : 'I will open.'), { kind: 'app' });
+    if (!isPlayersTurn()) setTimeout(engineMove, 600);
+  }
+  function undo() {
+    if (thinking) { say('Hold on, let me finish thinking first.'); return; }
+    if (!game.history().length) { say('There is nothing to take back.'); return; }
+    pendingConfirm = null;
+    game.undo();                                                   // last move (usually the engine's)
+    if (game.history().length && !isPlayersTurn()) game.undo();   // and yours before it
+    selected = null;
+    renderAll();
+    var h = game.history();
+    say('Taken back. ' + (h.length ? 'Last move now ' + h[h.length - 1] + '. ' : '') + 'Your move.', { kind: 'app' });
+  }
+  $('newGame').addEventListener('click', newGame);
+  $('undoBtn').addEventListener('click', undo);
+  $('readBtn').addEventListener('click', function () { say(describeBoard()); });
+  $('colorW').addEventListener('change', newGame);
+  $('colorB').addEventListener('change', newGame);
+
+  function updateLevel() {
+    var n = parseInt($('level').value, 10);
+    $('levelOut').textContent = 'Level ' + n;
+    $('levelHint').textContent = LEVELS[n - 1].hint;
+  }
+  $('level').addEventListener('input', updateLevel);
+  $('rate').addEventListener('input', function () { $('rateOut').textContent = parseFloat($('rate').value).toFixed(1) + '×'; });
+
+  // ---------- Hot-reload snapshot (keeps a game alive across republishes) ----------
+  function start(data) {
+    if (data && data.fen && data.color) {
+      playerColor = data.color;
+      if (playerColor === 'b') $('colorB').checked = true;
+      try { game.load(data.fen); if (data.pgn) { var g2 = new Chess(); if (g2.load_pgn(data.pgn)) game = g2; } } catch (e) {}
+      if (data.blind) setBlind(true);
+    }
+    buildCoords(); updateLevel(); renderAll();
+  }
+  try {
+    if (window.claude && window.claude.hot) {
+      if (window.claude.hot.snapshot) window.claude.hot.snapshot(function () { return { fen: game.fen(), pgn: game.pgn(), color: playerColor, blind: blind }; });
+      if (window.claude.hot.ready) window.claude.hot.ready(start); else start(window.claude.hot.data || {});
+    } else start({});
+  } catch (e) { start({}); }
+
+  log('app', 'Ready. Click a piece, or use "Speak a move" / the text box. The log shows what was heard and what the app did with it.');
+
+  // Expose for tests and tinkering.
+  window.__blindfold = { handleUtterance: handleUtterance, extractMoveIntent: extractMoveIntent, findMove: findMove, tokenize: tokenize, game: function () { return game; }, engine: function () { return engine; }, describeBoard: describeBoard };
+}
+
+// chess.js is required for everything. Try a second CDN before giving up.
+if (typeof Chess !== 'undefined') main();
+else {
+  var fallback = document.createElement('script');
+  fallback.src = 'https://unpkg.com/chess.js@0.10.3/chess.js';
+  fallback.onload = main;
+  fallback.onerror = function () {
+    document.getElementById('engineBadge').textContent = 'Could not load the chess rules library. Check your connection and reload.';
+    document.getElementById('engineBadge').className = 'badge warn';
+  };
+  document.head.appendChild(fallback);
+}
+</script>
