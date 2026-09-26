@@ -6,6 +6,8 @@ Single-file prototype: `index.html`. No build step, no backend.
 - Opponent: Stockfish 10 (asm.js build, loaded from a CDN into a Web Worker), strength slider 1–8
 - Voice in: browser Web Speech API (Chrome / Edge). Voice out: browser speech synthesis
 - Blindfold: "Hide board" toggle, or say "hide board"
+- Optional premium voice: OpenAI speech API with your own key (stored only in your browser)
+- Piece images: the cburnett set (CC BY-SA 3.0, via chessground)
 
 ## Run it with the microphone
 
