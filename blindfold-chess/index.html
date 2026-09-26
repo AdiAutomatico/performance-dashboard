@@ -366,7 +366,7 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10a7 7 0 0 0 14 0"></path><path d="M12 17v5"></path><path d="M8 22h8"></path></svg>
             </button>
             <div class="mic-label" id="micLabel">Speak a move</div>
-            <div class="mic-hint">Click, or hold the space bar</div>
+            <div class="mic-hint">One click starts a session. Click again to stop.</div>
             <div class="meter" aria-hidden="true"><span id="meter1"></span></div>
             <div class="mic-dev" id="micDev"></div>
           </div>
@@ -452,7 +452,7 @@
         <div class="eyebrow">Voice</div>
         <label class="check"><span>Voice</span><select id="voiceSel" aria-label="Voice"><option value="">Auto (best available)</option></select></label>
         <label class="check"><span>Speed</span><input type="range" id="rate" min="0.7" max="1.3" step="0.05" value="0.95"><output id="rateOut" for="rate" hidden>0.95×</output></label>
-        <label class="check"><span>Keep listening after each move</span><input type="checkbox" id="handsFree"></label>
+        <label class="check"><span>Keep listening until I stop it</span><input type="checkbox" id="handsFree" checked></label>
         <label class="check"><span>Speak the engine's moves</span><input type="checkbox" id="speakEngine" checked></label>
         <label class="check"><span>Repeat my move back to me</span><input type="checkbox" id="speakMine" checked></label>
         <label class="check"><span>Confirm before playing</span><input type="checkbox" id="confirmMoves"></label>
@@ -1232,7 +1232,7 @@ function main() {
           showNote('Speech recognition needs internet access to the browser\u2019s speech service. Check the connection and try again.');
         } else if (ev.error === 'no-speech') {
           $('heard').innerHTML = '<i>No speech heard.</i>'; $('hearing').textContent = 'No speech heard.';
-          if (silentSoFar) showNote('The microphone is open but no sound is arriving. On a Mac: System Settings \u2192 Privacy & Security \u2192 Microphone, make sure Chrome is on. Also check which input device Chrome uses (address bar icon \u2192 Site settings \u2192 Microphone).');
+          if (silentSoFar && !silenceNoteShown) { silenceNoteShown = true; showNote('Nothing heard yet. If the bar under the microphone never moves while you talk, Chrome is getting silence: on a Mac check System Settings \u2192 Privacy & Security \u2192 Microphone (Chrome on), and the input device under the address bar icon \u2192 Site settings \u2192 Microphone.'); }
         } else if (ev.error !== 'aborted') {
           showNote('Speech recognition error: ' + ev.error);
         }
@@ -1255,7 +1255,7 @@ function main() {
   // ---------- Microphone level meter ----------
   // Shows whether sound is actually reaching the browser. If the bar never
   // moves while you talk, the problem is the OS or device, not the page.
-  var meterStream = null, meterCtx = null, meterRaf = 0, silentSoFar = true, meterStart = 0;
+  var meterStream = null, meterCtx = null, meterRaf = 0, silentSoFar = true, meterStart = 0, silenceNoteShown = false;
   function startMeter() {
     if (meterStream || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
     silentSoFar = true; meterStart = Date.now();
@@ -1299,7 +1299,7 @@ function main() {
     $('micBtn2').classList.toggle('on', listening);
     $('micBtn').setAttribute('aria-label', listening ? 'Listening, click to stop' : 'Speak a move');
     $('micBtn2').setAttribute('aria-label', listening ? 'Listening, click to stop' : 'Speak a move');
-    $('micLabel').textContent = listening ? 'Listening\u2026 click to stop' : 'Speak a move';
+    $('micLabel').textContent = listening ? 'Listening\u2026 click to stop' : (wantListening && $('handsFree').checked ? 'Paused while I talk' : 'Speak a move');
     if (listening) setVoiceBadge('Listening', 'live'); else if (SR) setVoiceBadge('Voice ready', 'ok');
   }
   function micClick() {
@@ -1314,9 +1314,11 @@ function main() {
     handleUtterance(c.dataset.say, []);
   });
   $('handsFree').addEventListener('change', function () {
+    try { localStorage.setItem('bc-handsfree', $('handsFree').checked ? '1' : '0'); } catch (e) {}
     if ($('handsFree').checked) { wantListening = true; if (!listening && isPlayersTurn()) startListening(); }
     else stopListening();
   });
+  try { if (localStorage.getItem('bc-handsfree') === '0') $('handsFree').checked = false; } catch (e) {}
 
   // Typed commands use the same path as speech.
   function sendTyped() {
