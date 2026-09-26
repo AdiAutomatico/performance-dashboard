@@ -252,7 +252,7 @@
   <div class="body">
     <section class="stage" id="stage">
       <div class="bar">
-        <div class="who"><span class="avatar engine">SF</span><span><span id="engineName">Stockfish</span> <span class="sub" id="engineSub">Level 3</span></span></div>
+        <div class="who"><span class="avatar engine">SF</span><span><span id="engineName">Stockfish</span> <span class="sub" id="engineSub">≈1200 Elo</span></span></div>
         <span class="turnpill" id="engineTurn">waiting</span>
       </div>
 
@@ -344,16 +344,16 @@
               </div>
             </div>
             <div class="field">
-              <label class="lbl" for="level">Engine strength</label>
+              <label class="lbl" for="level">Strength (approx. Elo)</label>
               <div class="stepper">
                 <button type="button" id="levelDown" aria-label="Weaker">−</button>
-                <output id="levelOut" for="level">3 / 8</output>
+                <output id="levelOut" for="level">≈1200</output>
                 <button type="button" id="levelUp" aria-label="Stronger">+</button>
                 <input type="hidden" id="level" value="3">
               </div>
             </div>
           </div>
-          <div class="hint" id="levelHint">Stockfish skill 4, quick search. About a club beginner.</div>
+          <div class="hint" id="levelHint">Level 3 of 8, about 1200 Elo. Skill 4, three plies deep. Club beginner.</div>
         </div>
       </div>
 
@@ -363,20 +363,16 @@
           <label class="check"><span>Voice engine</span>
             <select id="voiceEngine" aria-label="Voice engine">
               <option value="browser">Browser voice (free)</option>
-              <option value="openai">OpenAI voice (needs API key)</option>
+              <option value="elevenlabs">ElevenLabs voice (needs API key)</option>
             </select>
           </label>
           <div id="browserVoiceRow">
             <label class="check"><span>Voice</span><select id="voiceSel" aria-label="Voice"><option value="">Auto (best available)</option></select></label>
           </div>
-          <div id="openaiRows" hidden style="display:flex; flex-direction:column; gap:10px;">
-            <label class="check"><span>API key</span><input type="password" id="openaiKey" placeholder="sk-…" autocomplete="off" aria-label="OpenAI API key"></label>
-            <label class="check"><span>Voice</span>
-              <select id="openaiVoice" aria-label="OpenAI voice">
-                <option value="nova">Nova</option><option value="alloy">Alloy</option><option value="ash">Ash</option><option value="coral">Coral</option><option value="echo">Echo</option><option value="onyx">Onyx</option><option value="sage">Sage</option><option value="shimmer">Shimmer</option>
-              </select>
-            </label>
-            <div class="hint">The key stays in this browser only. It is sent to OpenAI directly for each sentence, nowhere else.</div>
+          <div id="elevenRows" hidden style="display:flex; flex-direction:column; gap:10px;">
+            <label class="check"><span>API key</span><input type="password" id="elevenKey" placeholder="sk_…" autocomplete="off" aria-label="ElevenLabs API key"></label>
+            <label class="check"><span>Voice ID</span><input type="text" id="elevenVoice" value="UgBBYS2sOqTuMpoF3BR0" autocomplete="off" aria-label="ElevenLabs voice ID"></label>
+            <div class="hint">The key stays in this browser only and is sent to ElevenLabs directly, nowhere else. A library voice must be added to "My Voices" in ElevenLabs before the API can use it.</div>
           </div>
           <label class="check"><span>Speed</span><input type="range" id="rate" min="0.7" max="1.3" step="0.05" value="1"><output id="rateOut" for="rate" hidden>1.00×</output></label>
           <label class="check"><span>Keep listening until I stop it</span><input type="checkbox" id="handsFree" checked></label>
@@ -422,15 +418,18 @@ function main() {
 
   // ---------- Settings & state ----------
   var $ = function (id) { return document.getElementById(id); };
+  // Approximate Elo for each level. The browser build of Stockfish has no
+  // Elo option, so strength comes from its skill level plus a shallow search;
+  // the ratings are estimates, roughly in line with the levels on chess sites.
   var LEVELS = [
-    { skill: 0,  depth: 1,  ms: 200,  hint: 'Stockfish skill 0, one-ply search. Makes real blunders.' },
-    { skill: 2,  depth: 2,  ms: 250,  hint: 'Stockfish skill 2. Casual beginner.' },
-    { skill: 4,  depth: 3,  ms: 300,  hint: 'Stockfish skill 4, quick search. About a club beginner.' },
-    { skill: 7,  depth: 4,  ms: 400,  hint: 'Stockfish skill 7. Solid casual player.' },
-    { skill: 10, depth: 6,  ms: 600,  hint: 'Stockfish skill 10. Club player.' },
-    { skill: 13, depth: 8,  ms: 800,  hint: 'Stockfish skill 13. Strong club player.' },
-    { skill: 17, depth: 12, ms: 1200, hint: 'Stockfish skill 17. Expert.' },
-    { skill: 20, depth: 16, ms: 1500, hint: 'Stockfish full strength (skill 20), 1.5 s per move.' }
+    { elo: 600,  skill: 0,  depth: 1,  ms: 200,  hint: 'Skill 0, looks one move ahead. Hangs pieces often.' },
+    { elo: 900,  skill: 2,  depth: 2,  ms: 250,  hint: 'Skill 2, two plies deep. Casual beginner.' },
+    { elo: 1200, skill: 4,  depth: 3,  ms: 300,  hint: 'Skill 4, three plies deep. Club beginner.' },
+    { elo: 1450, skill: 7,  depth: 4,  ms: 400,  hint: 'Skill 7, four plies deep. Intermediate club player.' },
+    { elo: 1700, skill: 10, depth: 6,  ms: 600,  hint: 'Skill 10, six plies deep. Solid club player.' },
+    { elo: 2000, skill: 13, depth: 8,  ms: 800,  hint: 'Skill 13, eight plies deep. Strong club player.' },
+    { elo: 2300, skill: 17, depth: 12, ms: 1200, hint: 'Skill 17, twelve plies deep. Expert.' },
+    { elo: 2600, skill: 20, depth: 16, ms: 1500, hint: 'Full skill, 1.5 seconds per move. Master strength in this browser build.' }
   ];
   var PIECE_NAME = { p: 'pawn', n: 'knight', b: 'bishop', r: 'rook', q: 'queen', k: 'king' };
   var FILES = 'abcdefgh';
@@ -461,7 +460,7 @@ function main() {
 
   // ---------- Speech output ----------
   // Everything spoken goes through one queue, so a quick engine reply never
-  // cuts off the sentence before it. Voices: the browser's, or OpenAI's API.
+  // cuts off the sentence before it. Voices: the browser's, or ElevenLabs.
   var speechBusy = false, speechQueue = [], resumeAfterSpeech = false, currentAudio = null;
   function say(text, opts) {
     opts = opts || {};
@@ -483,7 +482,7 @@ function main() {
     var text = speechQueue.shift();
     var done = false;
     var finish = function () { if (done) return; done = true; setTimeout(speakNext, 150); };
-    if ($('voiceEngine').value === 'openai' && $('openaiKey').value.trim()) speakOpenAI(text, finish);
+    if ($('voiceEngine').value === 'elevenlabs' && $('elevenKey').value.trim()) speakElevenLabs(text, finish);
     else speakBrowser(text, finish);
   }
   function stopSpeaking() {
@@ -514,23 +513,25 @@ function main() {
       })();
     } catch (e) { finish(); }
   }
-  function speakOpenAI(text, finish) {
-    var key = $('openaiKey').value.trim();
+  function speakElevenLabs(text, finish) {
+    var key = $('elevenKey').value.trim();
+    var voice = $('elevenVoice').value.trim() || 'UgBBYS2sOqTuMpoF3BR0';
     var ctrl = new AbortController();
     var timer = setTimeout(function () { ctrl.abort(); }, 15000);
-    fetch('https://api.openai.com/v1/audio/speech', {
+    fetch('https://api.elevenlabs.io/v1/text-to-speech/' + encodeURIComponent(voice) + '?output_format=mp3_44100_128', {
       method: 'POST', signal: ctrl.signal,
-      headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+      headers: { 'xi-api-key': key, 'Content-Type': 'application/json', 'Accept': 'audio/mpeg' },
       body: JSON.stringify({
-        model: 'gpt-4o-mini-tts',
-        voice: $('openaiVoice').value || 'nova',
-        input: text,
-        response_format: 'mp3',
-        instructions: 'You are a calm, friendly chess coach reading moves aloud at a table. Natural pacing. Say letters and numbers clearly, for example "E 4" as the letter E and the number four.'
+        text: text,
+        model_id: 'eleven_flash_v2_5',            // low-latency model, fine for short move calls
+        voice_settings: { stability: 0.5, similarity_boost: 0.75, style: 0.2, use_speaker_boost: true }
       })
     }).then(function (r) {
       clearTimeout(timer);
-      if (!r.ok) throw new Error('OpenAI replied ' + r.status);
+      if (!r.ok) return r.text().then(function (body) {
+        var why = r.status === 401 ? 'the API key was rejected' : ((r.status === 404 || /voice_not_found/.test(body)) ? 'that voice ID was not found; add the voice to My Voices in ElevenLabs' : 'ElevenLabs replied ' + r.status);
+        throw new Error(why);
+      });
       return r.blob();
     }).then(function (blob) {
       var url = URL.createObjectURL(blob);
@@ -540,7 +541,7 @@ function main() {
       return a.play();
     }).catch(function (err) {
       clearTimeout(timer);
-      showNote('OpenAI voice failed (' + ((err && err.message) || err) + '). Using the browser voice for now. Check the API key.');
+      showNote('ElevenLabs voice failed: ' + ((err && err.message) || err) + '. Using the browser voice for now.');
       speakBrowser(text, finish);
     });
   }
@@ -609,22 +610,10 @@ function main() {
   function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
   function describeMove(m, who) {
-    // m is a verbose move object from chess.js
-    var s;
-    if (m.flags.indexOf('k') >= 0) s = 'castles kingside';
-    else if (m.flags.indexOf('q') >= 0) s = 'castles queenside';
-    else {
-      s = PIECE_NAME[m.piece] + ' from ' + sqSpoken(m.from);
-      if (m.captured) s += ' takes ' + PIECE_NAME[m.captured] + ' on ' + sqSpoken(m.to);
-      else s += ' to ' + sqSpoken(m.to);
-      if (m.flags.indexOf('e') >= 0) s += ', en passant';
-      if (m.promotion) s += ', promotes to ' + PIECE_NAME[m.promotion];
-    }
-    var lead = who === 'engine' ? 'I play ' : (who === 'you' ? 'You play ' : '');
-    var out = lead + s + '.';
-    if (game.in_checkmate()) out += ' Checkmate.';
-    else if (game.in_check()) out += ' Check.';
-    return out;
+    var lead = who === 'you' ? 'You play ' : '';
+    var t = sanSpoken(m.san);
+    if (m.flags.indexOf('e') >= 0) t += ', en passant';
+    return (lead ? lead + t : cap(t)) + '.';
   }
 
   // Speak a SAN move the way a player would read it: "knight F 3", "E takes D 5".
@@ -807,7 +796,7 @@ function main() {
     if (res) {
       engine = makeStockfishEngine(res.worker);
       $('engineName').textContent = 'Stockfish 10';
-      setEngineBadge('Stockfish 10 · Level ' + $('level').value, 'ok');
+      setEngineBadge('Stockfish 10 \u00B7 \u2248' + LEVELS[parseInt($('level').value, 10) - 1].elo + ' Elo', 'ok');
       log('app', 'Stockfish loaded from ' + res.url.replace(/^https:\/\//, '') + '.');
     } else {
       engine = makeBuiltinEngine();
@@ -1491,21 +1480,21 @@ function main() {
   $('undoBtn').addEventListener('click', undo);
   $('readBtn').addEventListener('click', function () { say(describeBoard()); });
   $('readMovesBtn').addEventListener('click', function () { say(describeMoves()); });
-  $('testVoice').addEventListener('click', function () { say('Knight from G 1 to F 3. Check.', { kind: 'app' }); });
+  $('testVoice').addEventListener('click', function () { say('Knight F 3, check. Your move.', { kind: 'app' }); });
 
-  // Voice engine choice and the OpenAI key live only in this browser.
+  // Voice engine choice and the ElevenLabs key live only in this browser.
   function syncVoiceEngineUI() {
-    var oa = $('voiceEngine').value === 'openai';
-    $('openaiRows').hidden = !oa;
-    $('browserVoiceRow').hidden = oa;
+    var el = $('voiceEngine').value === 'elevenlabs';
+    $('elevenRows').hidden = !el;
+    $('browserVoiceRow').hidden = el;
   }
   $('voiceEngine').addEventListener('change', function () { syncVoiceEngineUI(); try { localStorage.setItem('bc-voice-engine', this.value); } catch (e) {} });
-  $('openaiKey').addEventListener('change', function () { try { localStorage.setItem('bc-openai-key', this.value.trim()); } catch (e) {} });
-  $('openaiVoice').addEventListener('change', function () { try { localStorage.setItem('bc-openai-voice', this.value); } catch (e) {} });
+  $('elevenKey').addEventListener('change', function () { try { localStorage.setItem('bc-eleven-key', this.value.trim()); } catch (e) {} });
+  $('elevenVoice').addEventListener('change', function () { try { localStorage.setItem('bc-eleven-voice', this.value.trim()); } catch (e) {} });
   try {
-    var ve = localStorage.getItem('bc-voice-engine'); if (ve) $('voiceEngine').value = ve;
-    var ok = localStorage.getItem('bc-openai-key'); if (ok) $('openaiKey').value = ok;
-    var ov = localStorage.getItem('bc-openai-voice'); if (ov) $('openaiVoice').value = ov;
+    var ve = localStorage.getItem('bc-voice-engine'); if (ve === 'elevenlabs' || ve === 'browser') $('voiceEngine').value = ve;
+    var ek = localStorage.getItem('bc-eleven-key'); if (ek) $('elevenKey').value = ek;
+    var ev = localStorage.getItem('bc-eleven-voice'); if (ev) $('elevenVoice').value = ev;
   } catch (e) {}
   syncVoiceEngineUI();
   $('colorW').addEventListener('change', newGame);
@@ -1513,12 +1502,12 @@ function main() {
 
   function updateLevel() {
     var n = parseInt($('level').value, 10);
-    $('levelOut').textContent = n + ' / ' + LEVELS.length;
-    $('levelHint').textContent = LEVELS[n - 1].hint;
+    $('levelOut').textContent = '\u2248' + LEVELS[n - 1].elo;
+    $('levelHint').textContent = 'Level ' + n + ' of ' + LEVELS.length + ', about ' + LEVELS[n - 1].elo + ' Elo. ' + LEVELS[n - 1].hint;
     $('levelDown').disabled = n <= 1;
     $('levelUp').disabled = n >= LEVELS.length;
-    $('engineSub').textContent = 'Level ' + n;
-    if (engine && engine.kind === 'stockfish') setEngineBadge('Stockfish 10 · Level ' + n, 'ok');
+    $('engineSub').textContent = '\u2248' + LEVELS[n - 1].elo + ' Elo';
+    if (engine && engine.kind === 'stockfish') setEngineBadge('Stockfish 10 \u00B7 \u2248' + LEVELS[n - 1].elo + ' Elo', 'ok');
   }
   function stepLevel(d) {
     var n = Math.min(LEVELS.length, Math.max(1, parseInt($('level').value, 10) + d));
