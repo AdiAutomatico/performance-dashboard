@@ -1,317 +1,247 @@
 <title>Blindfold Chess Trainer</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,400;1,9..144,500&family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
-  /* Dark-first: the evening study. Light palette swaps in for light-theme viewers. */
+  /* One deliberate dark look, in the spirit of familiar chess sites. */
   :root {
     color-scheme: dark;
-    --bg: #171b18;
-    --stage: #1b201d;
-    --surface: #242b27;
-    --surface-2: #1f2521;
-    --ink: #ede9e0;
-    --ink-2: #c9cec5;
-    --muted: #9aa59d;
-    --faint: #6f7872;
-    --line: #2a312c;
-    --line-2: #333b36;
-    --accent: #d4ae62;
-    --accent-ink: #1a1509;
-    --accent-soft: #2c2616;
-    --engine-pill: #1f2a22;
-    --engine-pill-line: #3a4a3e;
-    --engine-pill-ink: #cfe3d3;
-    --mic: #e4734b;
-    --mic-soft: #2b1d16;
-    --mic-ring: rgba(228,115,75,.12);
-    --warn: #e0a54a;
-    --warn-soft: #34290f;
-    --danger: #e2665b;
-    --sq-light: #d9c7a4;
-    --sq-dark: #85603f;
-    --sq-last-light: #c9b08a;
-    --sq-last-dark: #9a6a3b;
-    --sq-select: rgba(212,174,98,.55);
-    --sq-target: rgba(212,174,98,.45);
-    --board-edge: #4a3524;
-    --piece-white: #fbf7ee;
-    --piece-black: #1a1512;
-    --shadow: 0 18px 40px rgba(0,0,0,.45);
-    --font-display: "Fraunces", Georgia, "Times New Roman", serif;
-    --font-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
-    --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
-  }
-  @media (prefers-color-scheme: light) {
-    :root:not([data-theme="dark"]) {
-      color-scheme: light;
-      --bg: #eceeea;
-      --stage: #f4f5f2;
-      --surface: #ffffff;
-      --surface-2: #e4e7e2;
-      --ink: #1b1f1c;
-      --ink-2: #3c443f;
-      --muted: #5e6862;
-      --faint: #8a938d;
-      --line: #d6dbd5;
-      --line-2: #c6ccc5;
-      --accent: #8a6a2b;
-      --accent-ink: #ffffff;
-      --accent-soft: #f1e8d3;
-      --engine-pill: #e4efe6;
-      --engine-pill-line: #b9d1bf;
-      --engine-pill-ink: #1f4a2e;
-      --mic: #b8552f;
-      --mic-soft: #f6e3da;
-      --mic-ring: rgba(184,85,47,.14);
-      --warn: #8a5a10;
-      --warn-soft: #f7ecd4;
-      --danger: #b3382e;
-      --sq-light: #e4d3b0;
-      --sq-dark: #9c7250;
-      --sq-last-light: #d3bd8f;
-      --sq-last-dark: #ad7c4a;
-      --sq-select: rgba(138,106,43,.5);
-      --sq-target: rgba(138,106,43,.42);
-      --board-edge: #6b4a2e;
-      --shadow: 0 14px 32px rgba(40,30,10,.18);
-    }
-  }
-  :root[data-theme="light"] {
-    color-scheme: light;
-    --bg: #eceeea;
-    --stage: #f4f5f2;
-    --surface: #ffffff;
-    --surface-2: #e4e7e2;
-    --ink: #1b1f1c;
-    --ink-2: #3c443f;
-    --muted: #5e6862;
-    --faint: #8a938d;
-    --line: #d6dbd5;
-    --line-2: #c6ccc5;
-    --accent: #8a6a2b;
-    --accent-ink: #ffffff;
-    --accent-soft: #f1e8d3;
-    --engine-pill: #e4efe6;
-    --engine-pill-line: #b9d1bf;
-    --engine-pill-ink: #1f4a2e;
-    --mic: #b8552f;
-    --mic-soft: #f6e3da;
-    --mic-ring: rgba(184,85,47,.14);
-    --warn: #8a5a10;
-    --warn-soft: #f7ecd4;
-    --danger: #b3382e;
-    --sq-light: #e4d3b0;
-    --sq-dark: #9c7250;
-    --sq-last-light: #d3bd8f;
-    --sq-last-dark: #ad7c4a;
-    --sq-select: rgba(138,106,43,.5);
-    --sq-target: rgba(138,106,43,.42);
-    --board-edge: #6b4a2e;
-    --shadow: 0 14px 32px rgba(40,30,10,.18);
+    --bg: #312e2b;
+    --panel: #262421;
+    --panel-2: #21201d;
+    --row: #2a2825;
+    --ink: #e8e6e3;
+    --ink-2: #c3c2c1;
+    --muted: #9d9b99;
+    --faint: #75736f;
+    --line: #3d3a37;
+    --line-2: #4a4744;
+    --green: #81b64c;
+    --green-hover: #a3d160;
+    --green-dark: #45753c;
+    --green-ink: #ffffff;
+    --grey-btn: #454341;
+    --grey-btn-hover: #56534f;
+    --mic: #e0533b;
+    --mic-soft: #3a2420;
+    --mic-ring: rgba(224,83,59,.18);
+    --warn: #f0b429;
+    --warn-soft: #3a3016;
+    --sq-light: #eeeed2;
+    --sq-dark: #769656;
+    --sq-last-light: #f6f669;
+    --sq-last-dark: #baca2b;
+    --sq-select: rgba(255,255,51,.55);
+    --dot: rgba(0,0,0,.14);
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   }
 
   * { box-sizing: border-box; }
   [hidden] { display: none !important; }
   html, body { height: 100%; }
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--ink);
-    font-family: var(--font-body);
-    font-size: 15px;
-    line-height: 1.45;
-  }
-  button { font: inherit; cursor: pointer; }
-  button:focus-visible, input:focus-visible, select:focus-visible, .toggle input:focus-visible + .knob { outline: 2px solid var(--accent); outline-offset: 2px; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 14px; line-height: 1.4; }
+  button { font: inherit; cursor: pointer; color: inherit; }
+  button:focus-visible, input:focus-visible, select:focus-visible, .toggle input:focus-visible + .knob { outline: 2px solid var(--green); outline-offset: 2px; }
 
   .app { min-height: 100%; display: flex; flex-direction: column; }
 
   /* Top bar */
   .top {
-    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px 20px;
-    padding-block: 14px; padding-inline: 32px;
-    border-bottom: 1px solid var(--line);
-    position: sticky; top: env(safe-area-inset-top, 0px); background: var(--bg); z-index: 5;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 16px;
+    padding-block: 10px; padding-inline: 20px;
+    background: var(--panel); border-bottom: 1px solid var(--panel-2);
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
   }
-  .brand { display: flex; align-items: baseline; gap: 12px; }
-  .brand h1 { margin: 0; font-family: var(--font-display); font-size: 26px; font-weight: 700; letter-spacing: -.01em; }
-  .brand .tag { font-size: 13px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; font-weight: 600; }
-  .pills { display: flex; gap: 10px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; }
+  .brand svg { width: 26px; height: 26px; }
+  .pills { display: flex; gap: 8px; flex-wrap: wrap; }
   .pill {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: 600; white-space: nowrap;
-    border: 1px solid var(--line-2); background: var(--surface); color: var(--ink-2);
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; white-space: nowrap;
+    background: var(--panel-2); color: var(--ink-2);
   }
   .pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--faint); flex: none; }
-  .pill.ok { border-color: var(--engine-pill-line); background: var(--engine-pill); color: var(--engine-pill-ink); }
-  .pill.ok .dot { background: var(--accent); }
-  .pill.warn { border-color: var(--warn); background: var(--warn-soft); color: var(--warn); }
+  .pill.ok .dot { background: var(--green); }
+  .pill.warn { color: var(--warn); }
   .pill.warn .dot { background: var(--warn); }
-  .pill.live { border-color: var(--mic); background: var(--mic-soft); color: var(--mic); }
+  .pill.live { color: var(--mic); }
   .pill.live .dot { background: var(--mic); animation: pulse 1.1s infinite; }
 
   /* Body */
-  .body { flex-grow: 1; display: grid; grid-template-columns: minmax(0, 1fr) 372px; }
-  @media (max-width: 980px) { .body { grid-template-columns: minmax(0, 1fr); } }
+  .body { flex-grow: 1; display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 20px; padding-block: 20px 32px; padding-inline: 20px; max-width: 1240px; width: 100%; margin: 0 auto; }
+  @media (max-width: 940px) { .body { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 600px) { .body, .top { padding-inline: 12px; } }
 
-  .stage {
-    padding-block: 22px 28px; padding-inline: 32px;
-    background: var(--stage); border-right: 1px solid var(--line);
-    display: flex; flex-direction: column; gap: 18px; min-width: 0;
-  }
-  @media (max-width: 980px) { .stage { border-right: 0; border-bottom: 1px solid var(--line); } }
-  @media (max-width: 600px) { .stage, .top, .rail { padding-inline: 16px; } }
+  .stage { display: flex; flex-direction: column; gap: 10px; min-width: 0; align-items: stretch; }
+  .stage > * { width: min(100%, 600px); margin-inline: auto; }
 
-  .status-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 16px; }
-  .turn { font-size: 20px; font-weight: 600; }
-  .turn .who { color: var(--accent); }
-  .turn.danger .who { color: var(--danger); }
+  /* Player bars, like the strips above and below a board */
+  .bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 36px; }
+  .bar .who { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+  .bar .avatar { width: 32px; height: 32px; border-radius: 4px; background: var(--panel-2); display: grid; place-items: center; color: var(--muted); font-weight: 700; font-size: 13px; }
+  .bar .avatar.engine { background: var(--green-dark); color: #fff; }
+  .bar .sub { font-weight: 400; color: var(--muted); font-size: 13px; }
+  .turnpill { font-size: 12px; font-weight: 600; padding: 4px 8px; border-radius: 4px; background: var(--panel-2); color: var(--muted); }
+  .turnpill.on { background: var(--green); color: var(--green-ink); }
+  .turnpill.danger { background: var(--mic); color: #fff; }
 
-  .toggle { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; font-size: 14px; font-weight: 500; color: var(--ink-2); position: relative; }
+  .toggle { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; font-size: 13px; font-weight: 600; color: var(--ink-2); position: relative; }
   .toggle input { position: absolute; opacity: 0; width: 0; height: 0; }
-  .toggle .knob { width: 42px; height: 24px; border-radius: 999px; background: var(--line-2); position: relative; transition: background .15s; flex: none; }
-  .toggle .knob::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--ink); transition: transform .15s, background .15s; }
-  .toggle input:checked + .knob { background: var(--accent); }
-  .toggle input:checked + .knob::after { transform: translateX(18px); background: var(--accent-ink); }
-
-  .play { display: flex; gap: 22px; align-items: flex-start; flex-wrap: wrap; }
+  .toggle .knob { width: 38px; height: 22px; border-radius: 999px; background: var(--grey-btn); position: relative; transition: background .15s; flex: none; }
+  .toggle .knob::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .15s; }
+  .toggle input:checked + .knob { background: var(--green); }
+  .toggle input:checked + .knob::after { transform: translateX(16px); }
 
   /* Board */
-  .board-shell {
-    display: grid; grid-template-columns: 16px minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) 16px; gap: 6px;
-    width: min(100%, 560px); flex: 1 1 360px;
-  }
-  .ranks, .files { display: grid; font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
-  .ranks { grid-template-rows: repeat(8, 1fr); align-items: center; justify-items: center; }
-  .files { grid-column: 2; grid-template-columns: repeat(8, 1fr); justify-items: center; align-items: center; }
   .board {
     display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr);
-    aspect-ratio: 1 / 1; max-width: 100%;
-    border-radius: 6px; overflow: hidden; user-select: none;
-    box-shadow: 0 0 0 2px var(--board-edge), var(--shadow);
+    aspect-ratio: 1 / 1; max-width: 100%; user-select: none;
+    border-radius: 4px; overflow: hidden; box-shadow: 0 6px 20px rgba(0,0,0,.35);
   }
-  .sq { position: relative; display: grid; place-items: center; font-size: clamp(22px, 6vw, 44px); line-height: 1; }
+  .sq { position: relative; }
   .sq.light { background: var(--sq-light); }
   .sq.dark { background: var(--sq-dark); }
-  .sq.light.last { background: var(--sq-last-light); }
-  .sq.dark.last { background: var(--sq-last-dark); }
-  .sq.selected::before { content: ""; position: absolute; inset: 0; background: var(--sq-select); }
-  .sq.target::after { content: ""; position: absolute; width: 26%; height: 26%; border-radius: 50%; background: var(--sq-target); }
-  .sq.target.has-piece::after { width: 100%; height: 100%; border-radius: 0; background: transparent; box-shadow: inset 0 0 0 4px var(--sq-target); }
+  .sq.light.last, .sq.light.selected { background: var(--sq-last-light); }
+  .sq.dark.last, .sq.dark.selected { background: var(--sq-last-dark); }
+  .sq.target::after { content: ""; position: absolute; left: 50%; top: 50%; width: 32%; height: 32%; transform: translate(-50%, -50%); border-radius: 50%; background: var(--dot); }
+  .sq.target.has-piece::after { width: 100%; height: 100%; border-radius: 50%; background: transparent; box-shadow: inset 0 0 0 6px var(--dot); }
   .sq.movable { cursor: pointer; }
-  .sq .p { position: relative; z-index: 1; pointer-events: none; }
-  .sq .p.w { color: var(--piece-white); text-shadow: 0 0 2px #000, 0 1px 1px rgba(0,0,0,.6); }
-  .sq .p.b { color: var(--piece-black); text-shadow: 0 0 1px rgba(255,255,255,.3); }
-
-  /* Voice column beside the board */
-  .voice { flex: 1 1 240px; min-width: 0; display: flex; flex-direction: column; gap: 14px; padding-top: 4px; }
-  .eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
-  .said { font-family: var(--font-display); font-style: italic; font-size: 23px; line-height: 1.3; font-weight: 400; text-wrap: balance; min-height: 1.3em; }
-  .rule { height: 1px; background: var(--line); }
-  .heard { font-size: 15px; color: var(--ink-2); min-height: 1.4em; overflow-wrap: anywhere; }
-  .heard i { color: var(--muted); }
-  .heard .san { font-family: var(--font-mono); font-weight: 600; color: var(--accent); }
-  .mic-block { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; margin-top: 6px; }
-  .mic {
-    width: 84px; height: 84px; border-radius: 50%;
-    border: 2px solid var(--line-2); background: var(--surface); color: var(--ink-2);
-    display: grid; place-items: center; transition: box-shadow .2s, border-color .2s, color .2s;
-  }
-  .mic:hover { border-color: var(--mic); color: var(--mic); }
-  .mic.on { border-color: var(--mic); background: var(--mic-soft); color: var(--mic); box-shadow: 0 0 0 10px var(--mic-ring); animation: ring 1.4s infinite; }
-  .mic svg { width: 34px; height: 34px; }
-  .mic-label { font-size: 14px; color: var(--ink-2); font-weight: 500; }
-  .mic-hint { font-size: 13px; color: var(--faint); }
-  .meter { width: 160px; height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
-  .meter > span { display: block; height: 100%; width: 0; background: var(--mic); transition: width .08s linear; }
-  .mic-dev { font-size: 12px; color: var(--faint); overflow-wrap: anywhere; }
-  .blind .meter { width: 220px; }
-  .typed { display: flex; gap: 8px; }
-  .typed input {
-    flex: 1 1 160px; min-width: 0; font: inherit; font-size: 14px; padding: 10px 12px;
-    border-radius: 8px; border: 1px solid var(--line-2); background: var(--bg); color: var(--ink);
-  }
-  .btn { font-size: 14px; font-weight: 600; padding: 9px 14px; border-radius: 8px; border: 1px solid var(--line-2); background: var(--surface); color: var(--ink); }
-  .btn:hover { border-color: var(--muted); }
-  .btn.accent { border-color: var(--accent); background: transparent; color: var(--accent); }
-  .btn.accent:hover { background: var(--accent-soft); }
-  .btn:disabled { opacity: .5; cursor: not-allowed; }
-  .note { font-size: 13px; padding: 8px 12px; border-radius: 8px; background: var(--warn-soft); color: var(--warn); border: 1px solid var(--warn); }
-  .promo { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-  .promo .btn { font-size: 22px; padding: 4px 12px; }
+  .sq .p { position: absolute; inset: 0; background-size: 100% 100%; background-repeat: no-repeat; pointer-events: none; z-index: 1; }
+  .sq .coord { position: absolute; font-size: clamp(8px, 1.6vw, 11px); font-weight: 700; line-height: 1; z-index: 2; }
+  .sq .coord.rank { top: 3px; left: 4px; }
+  .sq .coord.file { bottom: 3px; right: 4px; }
+  .sq.light .coord { color: var(--sq-dark); }
+  .sq.dark .coord { color: var(--sq-light); }
+  .board.viewing { outline: 3px solid var(--warn); outline-offset: -3px; }
+  .p.wp { background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PHBhdGggZD0iTTIyLjUgOWMtMi4yMSAwLTQgMS43OS00IDQgMCAuODkuMjkgMS43MS43OCAyLjM4QzE3LjMzIDE2LjUgMTYgMTguNTkgMTYgMjFjMCAyLjAzLjk0IDMuODQgMi40MSA1LjAzLTMgMS4wNi03LjQxIDUuNTUtNy40MSAxMy40N2gyM2MwLTcuOTItNC40MS0xMi40MS03LjQxLTEzLjQ3IDEuNDctMS4xOSAyLjQxLTMgMi40MS01LjAzIDAtMi40MS0xLjMzLTQuNS0zLjI4LTUuNjIuNDktLjY3Ljc4LTEuNDkuNzgtMi4zOCAwLTIuMjEtMS43OS00LTQtNHoiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg=='); }
+  .p.wb { background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxnIGZpbGw9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJidXR0Ij48cGF0aCBkPSJNOSAzNmMzLjM5LS45NyAxMC4xMS40MyAxMy41LTIgMy4zOSAyLjQzIDEwLjExIDEuMDMgMTMuNSAyIDAgMCAxLjY1LjU0IDMgMi0uNjguOTctMS42NS45OS0zIC41LTMuMzktLjk3LTEwLjExLjQ2LTEzLjUtMS0zLjM5IDEuNDYtMTAuMTEuMDMtMTMuNSAxLTEuMzU0LjQ5LTIuMzIzLjQ3LTMtLjUgMS4zNTQtMS45NCAzLTIgMy0yeiIvPjxwYXRoIGQ9Ik0xNSAzMmMyLjUgMi41IDEyLjUgMi41IDE1IDAgLjUtMS41IDAtMiAwLTIgMC0yLjUtMi41LTQtMi41LTQgNS41LTEuNSA2LTExLjUtNS0xNS41LTExIDQtMTAuNSAxNC01IDE1LjUgMCAwLTIuNSAxLjUtMi41IDQgMCAwLS41LjUgMCAyeiIvPjxwYXRoIGQ9Ik0yNSA4YTIuNSAyLjUgMCAxIDEtNSAwIDIuNSAyLjUgMCAxIDEgNSAweiIvPjwvZz48cGF0aCBkPSJNMTcuNSAyNmgxME0xNSAzMGgxNW0tNy41LTE0LjV2NU0yMCAxOGg1IiBzdHJva2UtbGluZWpvaW49Im1pdGVyIi8+PC9nPjwvc3ZnPg=='); }
+  .p.wn { background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMiAxMGMxMC41IDEgMTYuNSA4IDE2IDI5SDE1YzAtOSAxMC02LjUgOC0yMSIgZmlsbD0iI2ZmZiIvPjxwYXRoIGQ9Ik0yNCAxOGMuMzggMi45MS01LjU1IDcuMzctOCA5LTMgMi0yLjgyIDQuMzQtNSA0LTEuMDQyLS45NCAxLjQxLTMuMDQgMC0zLTEgMCAuMTkgMS4yMy0xIDItMSAwLTQuMDAzIDEtNC00IDAtMiA2LTEyIDYtMTJzMS44OS0xLjkgMi0zLjVjLS43My0uOTk0LS41LTItLjUtMyAxLTEgMyAyLjUgMyAyLjVoMnMuNzgtMS45OTIgMi41LTNjMSAwIDEgMyAxIDMiIGZpbGw9IiNmZmYiLz48cGF0aCBkPSJNOS41IDI1LjVhLjUuNSAwIDEgMS0xIDAgLjUuNSAwIDEgMSAxIDB6bTUuNDMzLTkuNzVhLjUgMS41IDMwIDEgMS0uODY2LS41LjUgMS41IDMwIDEgMSAuODY2LjV6IiBmaWxsPSIjMDAwIi8+PC9nPjwvc3ZnPg=='); }
+  .p.wr { background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0iI2ZmZiIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik05IDM5aDI3di0zSDl2M3ptMy0zdi00aDIxdjRIMTJ6bS0xLTIyVjloNHYyaDVWOWg1djJoNVY5aDR2NSIgc3Ryb2tlLWxpbmVjYXA9ImJ1dHQiLz48cGF0aCBkPSJNMzQgMTRsLTMgM0gxNGwtMy0zIi8+PHBhdGggZD0iTTMxIDE3djEyLjVIMTRWMTciIHN0cm9rZS1saW5lY2FwPSJidXR0IiBzdHJva2UtbGluZWpvaW49Im1pdGVyIi8+PHBhdGggZD0iTTMxIDI5LjVsMS41IDIuNWgtMjBsMS41LTIuNSIvPjxwYXRoIGQ9Ik0xMSAxNGgyMyIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVqb2luPSJtaXRlciIvPjwvZz48L3N2Zz4='); }
+  .p.wq { background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0iI2ZmZiIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik04IDEyYTIgMiAwIDEgMS00IDAgMiAyIDAgMSAxIDQgMHptMTYuNS00LjVhMiAyIDAgMSAxLTQgMCAyIDIgMCAxIDEgNCAwek00MSAxMmEyIDIgMCAxIDEtNCAwIDIgMiAwIDEgMSA0IDB6TTE2IDguNWEyIDIgMCAxIDEtNCAwIDIgMiAwIDEgMSA0IDB6TTMzIDlhMiAyIDAgMSAxLTQgMCAyIDIgMCAxIDEgNCAweiIvPjxwYXRoIGQ9Ik05IDI2YzguNS0xLjUgMjEtMS41IDI3IDBsMi0xMi03IDExVjExbC01LjUgMTMuNS0zLTE1LTMgMTUtNS41LTE0VjI1TDcgMTRsMiAxMnoiIHN0cm9rZS1saW5lY2FwPSJidXR0Ii8+PHBhdGggZD0iTTkgMjZjMCAyIDEuNSAyIDIuNSA0IDEgMS41IDEgMSAuNSAzLjUtMS41IDEtMS41IDIuNS0xLjUgMi41LTEuNSAxLjUuNSAyLjUuNSAyLjUgNi41IDEgMTYuNSAxIDIzIDAgMCAwIDEuNS0xIDAtMi41IDAgMCAuNS0xLjUtMS0yLjUtLjUtMi41LS41LTIgLjUtMy41IDEtMiAyLjUtMiAyLjUtNC04LjUtMS41LTE4LjUtMS41LTI3IDB6IiBzdHJva2UtbGluZWNhcD0iYnV0dCIvPjxwYXRoIGQ9Ik0xMS41IDMwYzMuNS0xIDE4LjUtMSAyMiAwTTEyIDMzLjVjNi0xIDE1LTEgMjEgMCIgZmlsbD0ibm9uZSIvPjwvZz48L3N2Zz4='); }
+  .p.wk { background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMi41IDExLjYzVjZNMjAgOGg1IiBzdHJva2UtbGluZWpvaW49Im1pdGVyIi8+PHBhdGggZD0iTTIyLjUgMjVzNC41LTcuNSAzLTEwLjVjMCAwLTEtMi41LTMtMi41cy0zIDIuNS0zIDIuNWMtMS41IDMgMyAxMC41IDMgMTAuNSIgZmlsbD0iI2ZmZiIgc3Ryb2tlLWxpbmVjYXA9ImJ1dHQiIHN0cm9rZS1saW5lam9pbj0ibWl0ZXIiLz48cGF0aCBkPSJNMTEuNSAzN2M1LjUgMy41IDE1LjUgMy41IDIxIDB2LTdzOS00LjUgNi0xMC41Yy00LTYuNS0xMy41LTMuNS0xNiA0VjI3di0zLjVjLTMuNS03LjUtMTMtMTAuNS0xNi00LTMgNiA1IDEwIDUgMTBWMzd6IiBmaWxsPSIjZmZmIi8+PHBhdGggZD0iTTExLjUgMzBjNS41LTMgMTUuNS0zIDIxIDBtLTIxIDMuNWM1LjUtMyAxNS41LTMgMjEgMG0tMjEgMy41YzUuNS0zIDE1LjUtMyAyMSAwIi8+PC9nPjwvc3ZnPg=='); }
+  .p.bp { background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PHBhdGggZD0iTTIyLjUgOWMtMi4yMSAwLTQgMS43OS00IDQgMCAuODkuMjkgMS43MS43OCAyLjM4QzE3LjMzIDE2LjUgMTYgMTguNTkgMTYgMjFjMCAyLjAzLjk0IDMuODQgMi40MSA1LjAzLTMgMS4wNi03LjQxIDUuNTUtNy40MSAxMy40N2gyM2MwLTcuOTItNC40MS0xMi40MS03LjQxLTEzLjQ3IDEuNDctMS4xOSAyLjQxLTMgMi40MS01LjAzIDAtMi40MS0xLjMzLTQuNS0zLjI4LTUuNjIuNDktLjY3Ljc4LTEuNDkuNzgtMi4zOCAwLTIuMjEtMS43OS00LTQtNHoiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg=='); }
+  .p.bb { background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxnIGZpbGw9IiMwMDAiIHN0cm9rZS1saW5lY2FwPSJidXR0Ij48cGF0aCBkPSJNOSAzNmMzLjM5LS45NyAxMC4xMS40MyAxMy41LTIgMy4zOSAyLjQzIDEwLjExIDEuMDMgMTMuNSAyIDAgMCAxLjY1LjU0IDMgMi0uNjguOTctMS42NS45OS0zIC41LTMuMzktLjk3LTEwLjExLjQ2LTEzLjUtMS0zLjM5IDEuNDYtMTAuMTEuMDMtMTMuNSAxLTEuMzU0LjQ5LTIuMzIzLjQ3LTMtLjUgMS4zNTQtMS45NCAzLTIgMy0yeiIvPjxwYXRoIGQ9Ik0xNSAzMmMyLjUgMi41IDEyLjUgMi41IDE1IDAgLjUtMS41IDAtMiAwLTIgMC0yLjUtMi41LTQtMi41LTQgNS41LTEuNSA2LTExLjUtNS0xNS41LTExIDQtMTAuNSAxNC01IDE1LjUgMCAwLTIuNSAxLjUtMi41IDQgMCAwLS41LjUgMCAyeiIvPjxwYXRoIGQ9Ik0yNSA4YTIuNSAyLjUgMCAxIDEtNSAwIDIuNSAyLjUgMCAxIDEgNSAweiIvPjwvZz48cGF0aCBkPSJNMTcuNSAyNmgxME0xNSAzMGgxNW0tNy41LTE0LjV2NU0yMCAxOGg1IiBzdHJva2U9IiNlY2VjZWMiIHN0cm9rZS1saW5lam9pbj0ibWl0ZXIiLz48L2c+PC9zdmc+'); }
+  .p.bn { background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMiAxMGMxMC41IDEgMTYuNSA4IDE2IDI5SDE1YzAtOSAxMC02LjUgOC0yMSIgZmlsbD0iIzAwMCIvPjxwYXRoIGQ9Ik0yNCAxOGMuMzggMi45MS01LjU1IDcuMzctOCA5LTMgMi0yLjgyIDQuMzQtNSA0LTEuMDQyLS45NCAxLjQxLTMuMDQgMC0zLTEgMCAuMTkgMS4yMy0xIDItMSAwLTQuMDAzIDEtNC00IDAtMiA2LTEyIDYtMTJzMS44OS0xLjkgMi0zLjVjLS43My0uOTk0LS41LTItLjUtMyAxLTEgMyAyLjUgMyAyLjVoMnMuNzgtMS45OTIgMi41LTNjMSAwIDEgMyAxIDMiIGZpbGw9IiMwMDAiLz48cGF0aCBkPSJNOS41IDI1LjVhLjUuNSAwIDEgMS0xIDAgLjUuNSAwIDEgMSAxIDB6bTUuNDMzLTkuNzVhLjUgMS41IDMwIDEgMS0uODY2LS41LjUgMS41IDMwIDEgMSAuODY2LjV6IiBmaWxsPSIjZWNlY2VjIiBzdHJva2U9IiNlY2VjZWMiLz48cGF0aCBkPSJNMjQuNTUgMTAuNGwtLjQ1IDEuNDUuNS4xNWMzLjE1IDEgNS42NSAyLjQ5IDcuOSA2Ljc1UzM1Ljc1IDI5LjA2IDM1LjI1IDM5bC0uMDUuNWgyLjI1bC4wNS0uNWMuNS0xMC4wNi0uODgtMTYuODUtMy4yNS0yMS4zNC0yLjM3LTQuNDktNS43OS02LjY0LTkuMTktNy4xNmwtLjUxLS4xeiIgZmlsbD0iI2VjZWNlYyIgc3Ryb2tlPSJub25lIi8+PC9nPjwvc3ZnPg=='); }
+  .p.br { background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik05IDM5aDI3di0zSDl2M3ptMy41LTdsMS41LTIuNWgxN2wxLjUgMi41aC0yMHptLS41IDR2LTRoMjF2NEgxMnoiIHN0cm9rZS1saW5lY2FwPSJidXR0Ii8+PHBhdGggZD0iTTE0IDI5LjV2LTEzaDE3djEzSDE0eiIgc3Ryb2tlLWxpbmVjYXA9ImJ1dHQiIHN0cm9rZS1saW5lam9pbj0ibWl0ZXIiLz48cGF0aCBkPSJNMTQgMTYuNUwxMSAxNGgyM2wtMyAyLjVIMTR6TTExIDE0VjloNHYyaDVWOWg1djJoNVY5aDR2NUgxMXoiIHN0cm9rZS1saW5lY2FwPSJidXR0Ii8+PHBhdGggZD0iTTEyIDM1LjVoMjFtLTIwLTRoMTltLTE4LTJoMTdtLTE3LTEzaDE3TTExIDE0aDIzIiBmaWxsPSJub25lIiBzdHJva2U9IiNlY2VjZWMiIHN0cm9rZS13aWR0aD0iMSIgc3Ryb2tlLWxpbmVqb2luPSJtaXRlciIvPjwvZz48L3N2Zz4='); }
+  .p.bq { background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxnIHN0cm9rZT0ibm9uZSI+PGNpcmNsZSBjeD0iNiIgY3k9IjEyIiByPSIyLjc1Ii8+PGNpcmNsZSBjeD0iMTQiIGN5PSI5IiByPSIyLjc1Ii8+PGNpcmNsZSBjeD0iMjIuNSIgY3k9IjgiIHI9IjIuNzUiLz48Y2lyY2xlIGN4PSIzMSIgY3k9IjkiIHI9IjIuNzUiLz48Y2lyY2xlIGN4PSIzOSIgY3k9IjEyIiByPSIyLjc1Ii8+PC9nPjxwYXRoIGQ9Ik05IDI2YzguNS0xLjUgMjEtMS41IDI3IDBsMi41LTEyLjVMMzEgMjVsLS4zLTE0LjEtNS4yIDEzLjYtMy0xNC41LTMgMTQuNS01LjItMTMuNkwxNCAyNSA2LjUgMTMuNSA5IDI2eiIgc3Ryb2tlLWxpbmVjYXA9ImJ1dHQiLz48cGF0aCBkPSJNOSAyNmMwIDIgMS41IDIgMi41IDQgMSAxLjUgMSAxIC41IDMuNS0xLjUgMS0xLjUgMi41LTEuNSAyLjUtMS41IDEuNS41IDIuNS41IDIuNSA2LjUgMSAxNi41IDEgMjMgMCAwIDAgMS41LTEgMC0yLjUgMCAwIC41LTEuNS0xLTIuNS0uNS0yLjUtLjUtMiAuNS0zLjUgMS0yIDIuNS0yIDIuNS00LTguNS0xLjUtMTguNS0xLjUtMjcgMHoiIHN0cm9rZS1saW5lY2FwPSJidXR0Ii8+PHBhdGggZD0iTTExIDM4LjVhMzUgMzUgMSAwIDAgMjMgMCIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9ImJ1dHQiLz48cGF0aCBkPSJNMTEgMjlhMzUgMzUgMSAwIDEgMjMgMG0tMjEuNSAyLjVoMjBtLTIxIDNhMzUgMzUgMSAwIDAgMjIgMG0tMjMgM2EzNSAzNSAxIDAgMCAyNCAwIiBmaWxsPSJub25lIiBzdHJva2U9IiNlY2VjZWMiLz48L2c+PC9zdmc+'); }
+  .p.bk { background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMi41IDExLjYzVjYiIHN0cm9rZS1saW5lam9pbj0ibWl0ZXIiLz48cGF0aCBkPSJNMjIuNSAyNXM0LjUtNy41IDMtMTAuNWMwIDAtMS0yLjUtMy0yLjVzLTMgMi41LTMgMi41Yy0xLjUgMyAzIDEwLjUgMyAxMC41IiBmaWxsPSIjMDAwIiBzdHJva2UtbGluZWNhcD0iYnV0dCIgc3Ryb2tlLWxpbmVqb2luPSJtaXRlciIvPjxwYXRoIGQ9Ik0xMS41IDM3YzUuNSAzLjUgMTUuNSAzLjUgMjEgMHYtN3M5LTQuNSA2LTEwLjVjLTQtNi41LTEzLjUtMy41LTE2IDRWMjd2LTMuNWMtMy41LTcuNS0xMy0xMC41LTE2LTQtMyA2IDUgMTAgNSAxMFYzN3oiIGZpbGw9IiMwMDAiLz48cGF0aCBkPSJNMjAgOGg1IiBzdHJva2UtbGluZWpvaW49Im1pdGVyIi8+PHBhdGggZD0iTTMyIDI5LjVzOC41LTQgNi4wMy05LjY1QzM0LjE1IDE0IDI1IDE4IDIyLjUgMjQuNWwuMDEgMi4xLS4wMS0yLjFDMjAgMTggOS45MDYgMTQgNi45OTcgMTkuODVjLTIuNDk3IDUuNjUgNC44NTMgOSA0Ljg1MyA5IiBzdHJva2U9IiNlY2VjZWMiLz48cGF0aCBkPSJNMTEuNSAzMGM1LjUtMyAxNS41LTMgMjEgMG0tMjEgMy41YzUuNS0zIDE1LjUtMyAyMSAwbS0yMSAzLjVjNS41LTMgMTUuNS0zIDIxIDAiIHN0cm9rZT0iI2VjZWNlYyIvPjwvZz48L3N2Zz4='); }
 
   /* Blindfold panel */
   .blind {
-    flex: 1 1 100%; min-height: 420px;
-    border-radius: 12px; border: 1px dashed var(--line-2); background: var(--bg);
+    aspect-ratio: 1 / 1; max-width: 100%; border-radius: 4px; background: var(--panel);
     display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
-    gap: 22px; padding-block: 40px; padding-inline: 24px;
+    gap: 18px; padding-block: 28px; padding-inline: 20px;
   }
-  .blind .quote { font-family: var(--font-display); font-style: italic; font-size: clamp(26px, 4vw, 44px); line-height: 1.2; font-weight: 400; max-width: 22ch; text-wrap: balance; }
-  .blind .turnline { font-size: 18px; color: var(--muted); }
-  .blind .mic { width: 112px; height: 112px; margin-top: 6px; }
-  .blind .mic svg { width: 44px; height: 44px; }
-  .blind .hearing { font-size: 15px; color: var(--ink-2); font-style: italic; min-height: 1.4em; }
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 560px; }
-  .chip {
-    font-family: var(--font-mono); font-size: 12px; padding: 5px 10px; border-radius: 6px;
-    background: var(--surface); border: 1px solid var(--line-2); color: var(--ink-2);
-  }
-  .chip:hover { border-color: var(--accent); color: var(--accent); }
-  .stage.is-blind .voice-side { display: none; }
+  .blind .eyebrow { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+  .blind .quote { font-size: clamp(20px, 3.4vw, 30px); font-weight: 700; line-height: 1.25; max-width: 24ch; text-wrap: balance; }
+  .blind .turnline { font-size: 15px; color: var(--muted); }
+  .blind .hearing { font-size: 14px; color: var(--ink-2); font-style: italic; min-height: 1.4em; }
 
-  /* Rail */
-  .rail { padding-block: 20px 32px; padding-inline: 24px; display: flex; flex-direction: column; gap: 18px; background: var(--bg); min-width: 0; }
-  .section { display: flex; flex-direction: column; gap: 10px; }
-  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-  .field { display: flex; flex-direction: column; gap: 6px; }
-  .field .lbl { font-size: 13px; color: var(--muted); }
-  .seg { display: flex; border: 1px solid var(--line-2); border-radius: 8px; overflow: hidden; }
-  .seg label { flex: 1; text-align: center; padding: 8px 0; font-size: 14px; font-weight: 600; cursor: pointer; color: var(--ink-2); position: relative; }
-  .seg input { position: absolute; opacity: 0; width: 0; height: 0; }
-  .seg label:has(input:checked) { background: var(--accent); color: var(--accent-ink); }
-  .seg label:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: -2px; }
-  .stepper { display: flex; align-items: center; border: 1px solid var(--line-2); border-radius: 8px; overflow: hidden; }
-  .stepper button { width: 38px; font-size: 18px; padding: 5px 0; border: 0; background: transparent; color: var(--ink-2); }
-  .stepper button:hover { background: var(--surface); }
-  .stepper output { flex: 1; text-align: center; font-family: var(--font-mono); font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
-  .hint { font-size: 13px; color: var(--faint); }
+  /* Mic block under the board */
+  .microw { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; background: var(--panel); border-radius: 4px; padding: 12px 14px; }
+  .mic {
+    width: 56px; height: 56px; border-radius: 50%; flex: none;
+    border: 2px solid var(--line-2); background: var(--panel-2); color: var(--ink-2);
+    display: grid; place-items: center; transition: box-shadow .2s, border-color .2s, color .2s;
+  }
+  .mic:hover { border-color: var(--mic); color: var(--mic); }
+  .mic.on { border-color: var(--mic); background: var(--mic-soft); color: var(--mic); box-shadow: 0 0 0 8px var(--mic-ring); animation: ring 1.4s infinite; }
+  .mic svg { width: 24px; height: 24px; }
+  .blind .mic { width: 84px; height: 84px; }
+  .blind .mic svg { width: 36px; height: 36px; }
+  .micinfo { display: flex; flex-direction: column; gap: 4px; flex: 1 1 200px; min-width: 0; }
+  .mic-label { font-weight: 600; }
+  .heard { font-size: 13px; color: var(--ink-2); min-height: 1.3em; overflow-wrap: anywhere; }
+  .heard i { color: var(--muted); }
+  .heard .san { font-family: var(--mono); font-weight: 700; color: var(--green-hover); }
+  .meter { width: 140px; height: 5px; border-radius: 3px; background: var(--line); overflow: hidden; }
+  .meter > span { display: block; height: 100%; width: 0; background: var(--green); transition: width .08s linear; }
+  .mic-dev { font-size: 11px; color: var(--faint); overflow-wrap: anywhere; }
+  .said { font-size: 13px; color: var(--muted); }
+  .said b { color: var(--ink-2); font-weight: 600; }
+
+  .typed { display: flex; gap: 8px; }
+  .typed input, select, input[type=text], input[type=password] {
+    flex: 1 1 160px; min-width: 0; font: inherit; font-size: 13px; padding: 8px 10px;
+    border-radius: 4px; border: 1px solid var(--line-2); background: var(--panel-2); color: var(--ink);
+  }
+  .btn { font-size: 13px; font-weight: 700; padding: 8px 14px; border-radius: 4px; border: 0; border-bottom: 3px solid #2f2d2a; background: var(--grey-btn); color: #fff; }
+  .btn:hover { background: var(--grey-btn-hover); }
+  .btn.green { background: var(--green); border-bottom-color: var(--green-dark); color: var(--green-ink); }
+  .btn.green:hover { background: var(--green-hover); }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btn.small { padding: 5px 10px; font-size: 12px; border-bottom-width: 2px; }
+  .note { font-size: 13px; padding: 8px 12px; border-radius: 4px; background: var(--warn-soft); color: var(--warn); border: 1px solid var(--warn); }
+  .promo { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; background: var(--panel); border-radius: 4px; padding: 8px 12px; }
+  .promo .pp { width: 44px; height: 44px; border: 1px solid var(--line-2); border-radius: 4px; background: var(--panel-2) center / 100% 100% no-repeat; padding: 0; }
+  .promo .pp:hover { border-color: var(--green); }
+
+  /* Right panel */
+  .panel { background: var(--panel); border-radius: 4px; display: flex; flex-direction: column; min-width: 0; overflow: hidden; align-self: start; }
+  .panel-head { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--panel-2); font-weight: 700; font-size: 13px; }
+  .panel-head .muted { color: var(--muted); font-weight: 400; }
+
+  .moves { display: grid; grid-template-columns: 44px minmax(0, 1fr) minmax(0, 1fr); max-height: 300px; overflow: auto; font-size: 14px; font-variant-numeric: tabular-nums; }
+  .moves > div { padding: 6px 8px; }
+  .moves .n { color: var(--muted); background: var(--panel-2); text-align: right; padding-right: 10px; }
+  .moves .n.alt, .moves .m.alt { background: var(--row); }
+  .moves .m { cursor: pointer; font-weight: 600; }
+  .moves .m:hover { background: rgba(255,255,255,.06); }
+  .moves .m.cur { background: rgba(255,255,255,.16); border-radius: 3px; }
+  .moves .m.cur.viewing { box-shadow: inset 0 0 0 1px var(--warn); }
+  .moves .empty { grid-column: 1 / -1; color: var(--muted); padding: 12px; }
+  .movenav { display: flex; align-items: center; gap: 4px; padding: 8px; border-top: 1px solid var(--panel-2); }
+  .movenav button { flex: 1; padding: 6px 0; border-radius: 4px; border: 0; background: var(--panel-2); color: var(--ink-2); font-size: 16px; line-height: 1; }
+  .movenav button:hover { background: var(--grey-btn); color: #fff; }
+  .movenav button:disabled { opacity: .35; cursor: default; }
+  .viewbar { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 12px; background: var(--warn-soft); color: var(--warn); font-size: 13px; font-weight: 600; }
+
+  .panel-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
   .btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field .lbl { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .seg { display: flex; border-radius: 4px; overflow: hidden; background: var(--panel-2); }
+  .seg label { flex: 1; text-align: center; padding: 7px 0; font-size: 13px; font-weight: 700; cursor: pointer; color: var(--ink-2); position: relative; }
+  .seg input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .seg label:has(input:checked) { background: var(--green); color: var(--green-ink); }
+  .seg label:has(input:focus-visible) { outline: 2px solid var(--green); outline-offset: -2px; }
+  .stepper { display: flex; align-items: center; border-radius: 4px; overflow: hidden; background: var(--panel-2); }
+  .stepper button { width: 36px; font-size: 18px; padding: 4px 0; border: 0; background: transparent; color: var(--ink-2); }
+  .stepper button:hover { background: var(--grey-btn); }
+  .stepper output { flex: 1; text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .hint { font-size: 12px; color: var(--muted); }
 
-  .moves {
-    display: grid; grid-template-columns: 32px minmax(0, 1fr) minmax(0, 1fr); gap: 6px 12px;
-    font-family: var(--font-mono); font-size: 14px; font-variant-numeric: tabular-nums;
-    max-height: 168px; overflow: auto;
-  }
-  .moves .n { color: var(--faint); }
-  .moves .m.cur { color: var(--accent); font-weight: 600; }
-  .moves .empty { grid-column: 1 / -1; color: var(--faint); font-family: var(--font-body); }
-
-  .log { display: flex; flex-direction: column; gap: 10px; font-size: 14px; max-height: 320px; overflow: auto; }
-  .log .e { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 10px; align-items: start; }
-  .log .k { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding-top: 3px; }
-  .log .e.engine .k { color: var(--accent); }
+  .log { display: flex; flex-direction: column; gap: 8px; font-size: 13px; max-height: 260px; overflow: auto; }
+  .log .e { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 8px; align-items: start; }
+  .log .k { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); padding-top: 2px; }
+  .log .e.engine .k { color: var(--green); }
   .log .e.heard .k { color: var(--mic); }
   .log .e.heard .t { font-style: italic; color: var(--ink-2); }
-  .log .e.you .t { color: var(--ink-2); }
   .log .e.err .k { color: var(--warn); }
   .log .t { overflow-wrap: anywhere; }
 
-  .check { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 14px; color: var(--ink-2); cursor: pointer; }
-  .check input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--accent); margin: 0; flex: none; }
-  .check select, .check input[type=range] { max-width: 58%; }
-  select { font: inherit; font-size: 13px; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--line-2); background: var(--surface); color: var(--ink); }
-  input[type=range] { accent-color: var(--accent); width: 140px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { font-size: 12px; padding: 4px 9px; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--line); color: var(--ink-2); }
+  .chip:hover { border-color: var(--green); color: #fff; }
+
+  .check { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 13px; color: var(--ink-2); cursor: pointer; }
+  .check input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--green); margin: 0; flex: none; }
+  .check select, .check input[type=range], .check input[type=password] { max-width: 58%; flex: none; width: 58%; }
+  input[type=range] { accent-color: var(--green); }
+  details summary { cursor: pointer; font-weight: 700; font-size: 13px; list-style: none; display: flex; align-items: center; justify-content: space-between; }
+  details summary::after { content: "+"; color: var(--muted); }
+  details[open] summary::after { content: "–"; }
+  details[open] summary { margin-bottom: 8px; }
 
   @keyframes pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: .5; } }
-  @keyframes ring { 0%,100% { box-shadow: 0 0 0 10px var(--mic-ring); } 50% { box-shadow: 0 0 0 18px var(--mic-ring); } }
+  @keyframes ring { 0%,100% { box-shadow: 0 0 0 8px var(--mic-ring); } 50% { box-shadow: 0 0 0 14px var(--mic-ring); } }
   @media (prefers-reduced-motion: reduce) { .pill.live .dot, .mic.on { animation: none; } }
 </style>
 
 <div class="app">
   <header class="top">
     <div class="brand">
-      <h1>Blindfold Chess</h1>
-      <span class="tag">Trainer</span>
+      <svg viewBox="0 0 45 45" aria-hidden="true"><path d="M22.5 9c-2.21 0-4 1.79-4 4 0 .89.29 1.71.78 2.38C17.33 16.5 16 18.59 16 21c0 2.03.94 3.84 2.41 5.03-3 1.06-7.41 5.55-7.41 13.47h23c0-7.92-4.41-12.41-7.41-13.47 1.47-1.19 2.41-3 2.41-5.03 0-2.41-1.33-4.5-3.28-5.62.49-.67.78-1.49.78-2.38 0-2.21-1.79-4-4-4z" fill="#81b64c"/></svg>
+      <span>Blindfold Chess</span>
     </div>
     <div class="pills">
       <span class="pill" id="engineBadge"><span class="dot"></span><span id="engineBadgeText">Engine loading…</span></span>
@@ -321,64 +251,57 @@
 
   <div class="body">
     <section class="stage" id="stage">
-      <div class="status-row">
-        <div class="turn" id="turn">Your move <span class="who">· White</span></div>
-        <label class="toggle">
-          <input type="checkbox" id="blindToggle">
-          <span class="knob"></span>
-          <span>Hide board</span>
-        </label>
+      <div class="bar">
+        <div class="who"><span class="avatar engine">SF</span><span><span id="engineName">Stockfish</span> <span class="sub" id="engineSub">Level 3</span></span></div>
+        <span class="turnpill" id="engineTurn">waiting</span>
       </div>
 
-      <div class="play">
-        <div id="boardWrap" class="board-shell">
-          <div class="ranks" id="ranks"></div>
-          <div class="board" id="board" aria-label="Chess board"></div>
-          <div class="files" id="files"></div>
-        </div>
+      <div id="boardWrap">
+        <div class="board" id="board" aria-label="Chess board"></div>
+      </div>
 
-        <div id="blindPanel" class="blind" hidden>
-          <div class="eyebrow" id="blindEyebrow">Board hidden</div>
-          <div class="quote" id="blindLast">Say a move, or “read the board” to hear the position.</div>
-          <div class="turnline" id="blindTurn">Your move, White.</div>
-          <button type="button" class="mic" id="micBtn2" aria-label="Speak a move">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10a7 7 0 0 0 14 0"></path><path d="M12 17v5"></path><path d="M8 22h8"></path></svg>
-          </button>
-          <div class="hearing" id="hearing"></div>
-          <div class="meter" aria-hidden="true"><span id="meter2"></span></div>
-          <div class="chips">
-            <button type="button" class="chip" data-say="read the board">read the board</button>
-            <button type="button" class="chip" data-say="where is my king">where is my king</button>
-            <button type="button" class="chip" data-say="what can my knight do">what can my knight do</button>
-            <button type="button" class="chip" data-say="last move">last move</button>
-            <button type="button" class="chip" data-say="show board">show board</button>
-          </div>
-        </div>
+      <div id="blindPanel" class="blind" hidden>
+        <div class="eyebrow" id="blindEyebrow">Board hidden</div>
+        <div class="quote" id="blindLast">Say a move, or "read the moves" to hear the game so far.</div>
+        <div class="turnline" id="blindTurn">Your move, White.</div>
+        <button type="button" class="mic" id="micBtn2" aria-label="Speak a move">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10a7 7 0 0 0 14 0"></path><path d="M12 17v5"></path><path d="M8 22h8"></path></svg>
+        </button>
+        <div class="hearing" id="hearing"></div>
+        <div class="meter" aria-hidden="true"><span id="meter2"></span></div>
+      </div>
 
-        <div class="voice voice-side">
-          <div class="eyebrow">Last said</div>
-          <div class="said" id="saidLine">Ready when you are.</div>
-          <div class="rule"></div>
-          <div class="eyebrow">Heard</div>
-          <div class="heard" id="heard"><i>Nothing yet.</i></div>
-          <div class="mic-block">
-            <button type="button" class="mic" id="micBtn" aria-label="Speak a move">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10a7 7 0 0 0 14 0"></path><path d="M12 17v5"></path><path d="M8 22h8"></path></svg>
-            </button>
-            <div class="mic-label" id="micLabel">Speak a move</div>
-            <div class="mic-hint">One click starts a session. Click again to stop.</div>
-            <div class="meter" aria-hidden="true"><span id="meter1"></span></div>
-            <div class="mic-dev" id="micDev"></div>
-          </div>
+      <div class="bar">
+        <div class="who"><span class="avatar" id="youAvatar">You</span><span>You <span class="sub" id="youSub">White</span></span></div>
+        <div style="display:flex; gap:12px; align-items:center;">
+          <span class="turnpill" id="youTurn">your move</span>
+          <label class="toggle">
+            <input type="checkbox" id="blindToggle">
+            <span class="knob"></span>
+            <span>Hide board</span>
+          </label>
         </div>
       </div>
 
       <div id="promoRow" class="promo" hidden>
         <span>Promote to:</span>
-        <button type="button" class="btn" data-promo="q">♕</button>
-        <button type="button" class="btn" data-promo="r">♖</button>
-        <button type="button" class="btn" data-promo="b">♗</button>
-        <button type="button" class="btn" data-promo="n">♘</button>
+        <button type="button" class="pp p wq" data-promo="q" aria-label="Queen"></button>
+        <button type="button" class="pp p wr" data-promo="r" aria-label="Rook"></button>
+        <button type="button" class="pp p wb" data-promo="b" aria-label="Bishop"></button>
+        <button type="button" class="pp p wn" data-promo="n" aria-label="Knight"></button>
+      </div>
+
+      <div class="microw">
+        <button type="button" class="mic" id="micBtn" aria-label="Speak a move">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10a7 7 0 0 0 14 0"></path><path d="M12 17v5"></path><path d="M8 22h8"></path></svg>
+        </button>
+        <div class="micinfo">
+          <div class="mic-label" id="micLabel">Speak a move</div>
+          <div class="heard" id="heard"><i>Click the mic once. It keeps listening until you click again.</i></div>
+          <div class="meter" aria-hidden="true"><span id="meter1"></span></div>
+          <div class="mic-dev" id="micDev"></div>
+          <div class="said" id="saidLine"></div>
+        </div>
       </div>
 
       <div class="typed">
@@ -388,74 +311,105 @@
       <div class="note" id="micNote" hidden></div>
     </section>
 
-    <aside class="rail">
-      <div class="section">
-        <div class="eyebrow">Game</div>
-        <div class="grid2">
-          <div class="field">
-            <span class="lbl">You play</span>
-            <div class="seg" role="radiogroup" aria-label="Your color">
-              <label><input type="radio" name="color" value="w" id="colorW" checked>White</label>
-              <label><input type="radio" name="color" value="b" id="colorB">Black</label>
-            </div>
-          </div>
-          <div class="field">
-            <label class="lbl" for="level">Strength</label>
-            <div class="stepper">
-              <button type="button" id="levelDown" aria-label="Weaker">−</button>
-              <output id="levelOut" for="level">3 / 8</output>
-              <button type="button" id="levelUp" aria-label="Stronger">+</button>
-              <input type="hidden" id="level" value="3">
-            </div>
-          </div>
-        </div>
-        <div class="hint" id="levelHint">Stockfish skill 4, quick search. About a club beginner.</div>
-        <div class="btn-row">
-          <button type="button" class="btn accent" id="newGame">New game</button>
-          <button type="button" class="btn" id="undoBtn">Take back</button>
-          <button type="button" class="btn" id="readBtn">Read board</button>
-        </div>
-      </div>
-
-      <div class="rule"></div>
-
-      <div class="section">
-        <div class="eyebrow">Moves</div>
+    <aside style="display:flex; flex-direction:column; gap:14px; min-width:0;">
+      <div class="panel">
+        <div class="panel-head"><span>Moves</span><span class="muted" id="movesCount"></span></div>
         <div class="moves" id="moves"><div class="empty">No moves yet.</div></div>
-      </div>
-
-      <div class="rule"></div>
-
-      <div class="section">
-        <div class="eyebrow">Conversation</div>
-        <div class="log" id="log"></div>
-      </div>
-
-      <div class="rule"></div>
-
-      <div class="section">
-        <div class="eyebrow">Try saying</div>
-        <div class="chips" style="justify-content: flex-start;">
-          <button type="button" class="chip" data-say="read the board">read the board</button>
-          <button type="button" class="chip" data-say="where is my king">where is my king</button>
-          <button type="button" class="chip" data-say="castle kingside">castle kingside</button>
-          <button type="button" class="chip" data-say="bishop takes e5">bishop takes e5</button>
-          <button type="button" class="chip" data-say="last move">last move</button>
-          <button type="button" class="chip" data-say="take back">take back</button>
-          <button type="button" class="chip" data-say="hide board">hide board</button>
+        <div class="viewbar" id="viewbar" hidden>
+          <span id="viewText">Viewing move 3</span>
+          <span style="display:flex; gap:6px;">
+            <button type="button" class="btn small" id="backHere">Take back to here</button>
+            <button type="button" class="btn small" id="goLive">Latest</button>
+          </span>
+        </div>
+        <div class="movenav">
+          <button type="button" id="navFirst" aria-label="First move">|◀</button>
+          <button type="button" id="navPrev" aria-label="Previous move">◀</button>
+          <button type="button" id="navNext" aria-label="Next move">▶</button>
+          <button type="button" id="navLast" aria-label="Latest move">▶|</button>
+        </div>
+        <div class="panel-body">
+          <div class="btn-row">
+            <button type="button" class="btn green" id="newGame">New game</button>
+            <button type="button" class="btn" id="undoBtn">Take back</button>
+            <button type="button" class="btn" id="readMovesBtn">Read moves</button>
+            <button type="button" class="btn" id="readBtn">Read position</button>
+          </div>
+          <div class="grid2">
+            <div class="field">
+              <span class="lbl">You play</span>
+              <div class="seg" role="radiogroup" aria-label="Your color">
+                <label><input type="radio" name="color" value="w" id="colorW" checked>White</label>
+                <label><input type="radio" name="color" value="b" id="colorB">Black</label>
+              </div>
+            </div>
+            <div class="field">
+              <label class="lbl" for="level">Engine strength</label>
+              <div class="stepper">
+                <button type="button" id="levelDown" aria-label="Weaker">−</button>
+                <output id="levelOut" for="level">3 / 8</output>
+                <button type="button" id="levelUp" aria-label="Stronger">+</button>
+                <input type="hidden" id="level" value="3">
+              </div>
+            </div>
+          </div>
+          <div class="hint" id="levelHint">Stockfish skill 4, quick search. About a club beginner.</div>
         </div>
       </div>
 
-      <div class="rule"></div>
+      <div class="panel">
+        <div class="panel-head"><span>Voice</span></div>
+        <div class="panel-body">
+          <label class="check"><span>Voice engine</span>
+            <select id="voiceEngine" aria-label="Voice engine">
+              <option value="browser">Browser voice (free)</option>
+              <option value="openai">OpenAI voice (needs API key)</option>
+            </select>
+          </label>
+          <div id="browserVoiceRow">
+            <label class="check"><span>Voice</span><select id="voiceSel" aria-label="Voice"><option value="">Auto (best available)</option></select></label>
+          </div>
+          <div id="openaiRows" hidden style="display:flex; flex-direction:column; gap:10px;">
+            <label class="check"><span>API key</span><input type="password" id="openaiKey" placeholder="sk-…" autocomplete="off" aria-label="OpenAI API key"></label>
+            <label class="check"><span>Voice</span>
+              <select id="openaiVoice" aria-label="OpenAI voice">
+                <option value="nova">Nova</option><option value="alloy">Alloy</option><option value="ash">Ash</option><option value="coral">Coral</option><option value="echo">Echo</option><option value="onyx">Onyx</option><option value="sage">Sage</option><option value="shimmer">Shimmer</option>
+              </select>
+            </label>
+            <div class="hint">The key stays in this browser only. It is sent to OpenAI directly for each sentence, nowhere else.</div>
+          </div>
+          <label class="check"><span>Speed</span><input type="range" id="rate" min="0.7" max="1.3" step="0.05" value="1"><output id="rateOut" for="rate" hidden>1.00×</output></label>
+          <label class="check"><span>Keep listening until I stop it</span><input type="checkbox" id="handsFree" checked></label>
+          <label class="check"><span>Speak the engine's moves</span><input type="checkbox" id="speakEngine" checked></label>
+          <label class="check"><span>Repeat my move back to me</span><input type="checkbox" id="speakMine" checked></label>
+          <label class="check"><span>Confirm before playing</span><input type="checkbox" id="confirmMoves"></label>
+          <button type="button" class="btn small" id="testVoice">Test voice</button>
+        </div>
+      </div>
 
-      <div class="section">
-        <div class="eyebrow">Voice</div>
-        <label class="check"><span>Voice</span><select id="voiceSel" aria-label="Voice"><option value="">Auto (best available)</option></select></label>
-        <label class="check"><span>Speed</span><input type="range" id="rate" min="0.7" max="1.3" step="0.05" value="0.95"><output id="rateOut" for="rate" hidden>0.95×</output></label>
-        <label class="check"><span>Keep listening until I stop it</span><input type="checkbox" id="handsFree" checked></label>
-        <label class="check"><span>Speak the engine's moves</span><input type="checkbox" id="speakEngine" checked></label>
-        <label class="check"><span>Repeat my move back to me</span><input type="checkbox" id="speakMine" checked></label>
-        <label class="check"><span>Confirm before playing</span><input type="checkbox" id="confirmMoves"></label>
+      <div class="panel">
+        <div class="panel-head"><span>Conversation</span></div>
+        <div class="panel-body">
+          <div class="log" id="log"></div>
+          <details>
+            <summary>What you can say</summary>
+            <div class="chips">
+              <button type="button" class="chip" data-say="knight f3">knight f3</button>
+              <button type="button" class="chip" data-say="bishop takes e5">bishop takes e5</button>
+              <button type="button" class="chip" data-say="castle kingside">castle kingside</button>
+              <button type="button" class="chip" data-say="read the moves">read the moves</button>
+              <button type="button" class="chip" data-say="read the position">read the position</button>
+              <button type="button" class="chip" data-say="where is my king">where is my king</button>
+              <button type="button" class="chip" data-say="what can my knight do">what can my knight do</button>
+              <button type="button" class="chip" data-say="last move">last move</button>
+              <button type="button" class="chip" data-say="take back">take back</button>
+              <button type="button" class="chip" data-say="go to move 2">go to move 2</button>
+              <button type="button" class="chip" data-say="take back to move 2">take back to move 2</button>
+              <button type="button" class="chip" data-say="hide board">hide board</button>
+              <button type="button" class="chip" data-say="new game">new game</button>
+            </div>
+          </details>
+        </div>
       </div>
     </aside>
   </div>
@@ -479,7 +433,6 @@ function main() {
     { skill: 20, depth: 16, ms: 1500, hint: 'Stockfish full strength (skill 20), 1.5 s per move.' }
   ];
   var PIECE_NAME = { p: 'pawn', n: 'knight', b: 'bishop', r: 'rook', q: 'queen', k: 'king' };
-  var GLYPH = { w: { k: '♔', q: '♕', r: '♖', b: '♗', n: '♘', p: '♙' }, b: { k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟' } };
   var FILES = 'abcdefgh';
 
   var game = new Chess();
@@ -507,40 +460,94 @@ function main() {
   }
 
   // ---------- Speech output ----------
-  var speechBusy = false;
+  // Everything spoken goes through one queue, so a quick engine reply never
+  // cuts off the sentence before it. Voices: the browser's, or OpenAI's API.
+  var speechBusy = false, speechQueue = [], resumeAfterSpeech = false, currentAudio = null;
   function say(text, opts) {
     opts = opts || {};
     lastAnnouncement = text;
     showSaid(text);
     if (!opts.quiet) log(opts.kind || 'engine', text);
-    if (!('speechSynthesis' in window)) return;
+    speechQueue.push(text);
+    if (!speechBusy) speakNext();
+  }
+  function speakNext() {
+    if (!speechQueue.length) {
+      speechBusy = false;
+      var resume = resumeAfterSpeech; resumeAfterSpeech = false;
+      if ((resume || $('handsFree').checked) && wantListening && !game.game_over() && !thinking && isPlayersTurn()) startListening();
+      return;
+    }
+    if (!speechBusy) { resumeAfterSpeech = listening; if (listening) stopListening(true); }   // do not hear ourselves
+    speechBusy = true;
+    var text = speechQueue.shift();
+    var done = false;
+    var finish = function () { if (done) return; done = true; setTimeout(speakNext, 150); };
+    if ($('voiceEngine').value === 'openai' && $('openaiKey').value.trim()) speakOpenAI(text, finish);
+    else speakBrowser(text, finish);
+  }
+  function stopSpeaking() {
+    speechQueue = [];
+    try { window.speechSynthesis.cancel(); } catch (e) {}
+    if (currentAudio) { try { currentAudio.pause(); } catch (e) {} currentAudio = null; }
+    speechBusy = false;
+  }
+  function speakBrowser(text, finish) {
+    if (!('speechSynthesis' in window)) return finish();
     try {
-      // Pause the mic while we speak so we do not hear ourselves.
-      var resume = listening;
-      if (resume) stopListening(true);
-      var u = new SpeechSynthesisUtterance(text);
-      u.rate = parseFloat($('rate').value) || 0.95;
-      u.pitch = 1;
-      u.lang = 'en-US';
-      var v = currentVoice();
-      if (v) { u.voice = v; u.lang = v.lang || 'en-US'; }
-      speechBusy = true;
-      var done = false;
-      var finish = function () {
-        if (done) return; done = true;
-        speechBusy = false;
-        if ((resume || $('handsFree').checked) && !game.game_over() && !thinking && isPlayersTurn()) startListening();
-      };
-      u.onend = u.onerror = finish;
-      setTimeout(finish, 3000 + text.length * 90);   // safety net if the browser never fires onend
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(u);
-    } catch (e) { speechBusy = false; }
+      // Chrome silently stops long utterances after about 15 s, so go sentence by sentence.
+      var parts = text.match(/[^.!?]+[.!?]*\s*/g) || [text];
+      var chunks = [], cur = '';
+      parts.forEach(function (p) { if ((cur + p).length > 180 && cur) { chunks.push(cur); cur = p; } else cur += p; });
+      if (cur) chunks.push(cur);
+      var i = 0, rate = parseFloat($('rate').value) || 1, v = currentVoice();
+      (function next() {
+        if (i >= chunks.length) return finish();
+        var u = new SpeechSynthesisUtterance(chunks[i++]);
+        u.rate = rate; u.pitch = 1; u.lang = 'en-US';
+        if (v) { u.voice = v; u.lang = v.lang || 'en-US'; }
+        var fired = false;
+        var go = function () { if (fired) return; fired = true; next(); };
+        u.onend = u.onerror = go;
+        setTimeout(go, 2500 + u.text.length * 90);   // safety net if onend never fires
+        window.speechSynthesis.speak(u);
+      })();
+    } catch (e) { finish(); }
+  }
+  function speakOpenAI(text, finish) {
+    var key = $('openaiKey').value.trim();
+    var ctrl = new AbortController();
+    var timer = setTimeout(function () { ctrl.abort(); }, 15000);
+    fetch('https://api.openai.com/v1/audio/speech', {
+      method: 'POST', signal: ctrl.signal,
+      headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini-tts',
+        voice: $('openaiVoice').value || 'nova',
+        input: text,
+        response_format: 'mp3',
+        instructions: 'You are a calm, friendly chess coach reading moves aloud at a table. Natural pacing. Say letters and numbers clearly, for example "E 4" as the letter E and the number four.'
+      })
+    }).then(function (r) {
+      clearTimeout(timer);
+      if (!r.ok) throw new Error('OpenAI replied ' + r.status);
+      return r.blob();
+    }).then(function (blob) {
+      var url = URL.createObjectURL(blob);
+      var a = new Audio(url); currentAudio = a;
+      a.playbackRate = parseFloat($('rate').value) || 1;
+      a.onended = a.onerror = function () { URL.revokeObjectURL(url); currentAudio = null; finish(); };
+      return a.play();
+    }).catch(function (err) {
+      clearTimeout(timer);
+      showNote('OpenAI voice failed (' + ((err && err.message) || err) + '). Using the browser voice for now. Check the API key.');
+      speakBrowser(text, finish);
+    });
   }
 
   function showSaid(text) {
-    $('blindLast').textContent = '\u201C' + text + '\u201D';
-    $('saidLine').textContent = '\u201C' + text + '\u201D';
+    $('blindLast').textContent = text;
+    $('saidLine').innerHTML = 'Last said: <b>' + escapeHtml(text) + '</b>';
   }
 
   // ---------- Choosing a natural-sounding voice ----------
@@ -618,6 +625,37 @@ function main() {
     if (game.in_checkmate()) out += ' Checkmate.';
     else if (game.in_check()) out += ' Check.';
     return out;
+  }
+
+  // Speak a SAN move the way a player would read it: "knight F 3", "E takes D 5".
+  function sanSpoken(san) {
+    var suffix = /#$/.test(san) ? ', checkmate' : (/\+$/.test(san) ? ', check' : '');
+    var s = san.replace(/[+#]$/, '');
+    if (/^O-O-O/.test(s)) return 'castles queenside' + suffix;
+    if (/^O-O/.test(s)) return 'castles kingside' + suffix;
+    var promo = '', pm = s.match(/=([QRBN])$/);
+    if (pm) { promo = ', promotes to ' + PIECE_NAME[pm[1].toLowerCase()]; s = s.slice(0, -2); }
+    var out = [], piece = null;
+    if (/^[KQRBN]/.test(s)) { piece = PIECE_NAME[s[0].toLowerCase()]; s = s.slice(1); }
+    var to = s.slice(-2), mid = s.slice(0, -2);
+    var capture = mid.indexOf('x') >= 0; mid = mid.replace('x', '');
+    if (!piece) out.push(capture ? mid.toUpperCase() + ' takes' : 'pawn');
+    else { out.push(piece); if (mid) out.push('from ' + mid.toUpperCase()); if (capture) out.push('takes'); }
+    out.push(sqSpoken(to));
+    return out.join(' ') + promo + suffix;
+  }
+
+  // The game so far, one turn at a time: white's move, then black's.
+  function describeMoves() {
+    var h = game.history();
+    if (!h.length) return 'No moves yet. ' + (isPlayersTurn() ? 'Your move.' : 'My move.');
+    var parts = [];
+    for (var i = 0; i < h.length; i += 2) {
+      var t = 'Move ' + (i / 2 + 1) + ': ' + sanSpoken(h[i]);
+      if (h[i + 1]) t += ', ' + sanSpoken(h[i + 1]);
+      parts.push(t + '.');
+    }
+    return parts.join(' ') + ' ' + (game.game_over() ? 'Game over.' : (isPlayersTurn() ? 'Your move.' : 'My move.'));
   }
 
   function describeBoard() {
@@ -768,10 +806,12 @@ function main() {
   loadStockfish(ENGINE_URLS).then(function (res) {
     if (res) {
       engine = makeStockfishEngine(res.worker);
+      $('engineName').textContent = 'Stockfish 10';
       setEngineBadge('Stockfish 10 · Level ' + $('level').value, 'ok');
       log('app', 'Stockfish loaded from ' + res.url.replace(/^https:\/\//, '') + '.');
     } else {
       engine = makeBuiltinEngine();
+      $('engineName').textContent = 'Built-in engine';
       setEngineBadge('Built-in engine (weak fallback)', 'warn');
       log('err', 'Could not load Stockfish from a CDN. Using a small built-in engine so you can still try the interface.');
     }
@@ -780,23 +820,36 @@ function main() {
   });
 
   // ---------- Board rendering ----------
-  function buildCoords() {
-    var ranks = $('ranks'), files = $('files');
-    ranks.innerHTML = ''; files.innerHTML = '';
-    for (var i = 0; i < 8; i++) {
-      var r = document.createElement('div'); r.textContent = playerColor === 'w' ? 8 - i : i + 1; ranks.appendChild(r);
-      var f = document.createElement('div'); f.textContent = playerColor === 'w' ? FILES[i] : FILES[7 - i]; files.appendChild(f);
-    }
+  // Which position the board shows: the live game, or an earlier point of it.
+  var viewIndex = null;   // null = live; otherwise the number of plies shown
+  function viewGame() {
+    if (viewIndex === null) return game;
+    var g = new Chess(), h = game.history();
+    for (var i = 0; i < viewIndex; i++) g.move(h[i]);
+    return g;
+  }
+  function setView(idx) {
+    var n = game.history().length;
+    viewIndex = (idx === null || idx >= n) ? null : Math.max(0, idx);
+    selected = null; $('promoRow').hidden = true;
+    renderAll();
+  }
+  function stepView(d) {
+    var n = game.history().length, cur = viewIndex === null ? n : viewIndex;
+    setView(cur + d);
   }
 
   function renderBoard() {
     var board = $('board');
     board.innerHTML = '';
-    var b = game.board();
-    var hist = game.history({ verbose: true });
+    var live = viewIndex === null;
+    var g = viewGame();
+    var b = g.board();
+    var hist = g.history({ verbose: true });
     var last = hist.length ? hist[hist.length - 1] : null;
     var targets = {};
-    if (selected) game.moves({ square: selected, verbose: true }).forEach(function (m) { targets[m.to] = true; });
+    if (live && selected) game.moves({ square: selected, verbose: true }).forEach(function (m) { targets[m.to] = true; });
+    board.classList.toggle('viewing', !live);
     for (var i = 0; i < 64; i++) {
       var row = playerColor === 'w' ? Math.floor(i / 8) : 7 - Math.floor(i / 8);
       var col = playerColor === 'w' ? i % 8 : 7 - (i % 8);
@@ -806,14 +859,15 @@ function main() {
       el.className = 'sq ' + (((row + col) % 2 === 0) ? 'light' : 'dark');
       el.dataset.sq = sqName;
       if (last && (last.from === sqName || last.to === sqName)) el.classList.add('last');
-      if (selected === sqName) el.classList.add('selected');
+      if (live && selected === sqName) el.classList.add('selected');
       if (targets[sqName]) { el.classList.add('target'); if (p) el.classList.add('has-piece'); }
+      if (i % 8 === 0) { var rc = document.createElement('span'); rc.className = 'coord rank'; rc.textContent = 8 - row; el.appendChild(rc); }
+      if (i >= 56) { var fc = document.createElement('span'); fc.className = 'coord file'; fc.textContent = FILES[col]; el.appendChild(fc); }
       if (p) {
         var span = document.createElement('span');
-        span.className = 'p ' + p.color;
-        span.textContent = GLYPH[p.color][p.type];
+        span.className = 'p ' + p.color + p.type;
         el.appendChild(span);
-        if (p.color === playerColor && isPlayersTurn() && !thinking) el.classList.add('movable');
+        if (live && p.color === playerColor && isPlayersTurn() && !thinking) el.classList.add('movable');
       }
       if (targets[sqName]) el.classList.add('movable');
       board.appendChild(el);
@@ -823,34 +877,75 @@ function main() {
   function renderMoves() {
     var box = $('moves');
     box.innerHTML = '';
-    var h = game.history();
-    if (!h.length) { box.innerHTML = '<div class="empty">No moves yet.</div>'; return; }
-    for (var i = 0; i < h.length; i += 2) {
-      var n = document.createElement('div'); n.className = 'n'; n.textContent = (i / 2 + 1) + '.'; box.appendChild(n);
-      var w = document.createElement('div'); w.className = 'm' + (i === h.length - 1 ? ' cur' : ''); w.textContent = h[i]; box.appendChild(w);
-      var bl = document.createElement('div'); bl.className = 'm' + (i + 1 === h.length - 1 ? ' cur' : ''); bl.textContent = h[i + 1] || ''; box.appendChild(bl);
+    var h = game.history(), n = h.length;
+    var curPly = viewIndex === null ? n : viewIndex;
+    $('movesCount').textContent = n ? Math.ceil(n / 2) + (n <= 2 ? ' move' : ' moves') : '';
+    if (!n) box.innerHTML = '<div class="empty">No moves yet.</div>';
+    var curEl = null;
+    for (var i = 0; i < n; i += 2) {
+      var alt = ((i / 2) % 2 === 1) ? ' alt' : '';
+      var num = document.createElement('div'); num.className = 'n' + alt; num.textContent = (i / 2 + 1) + '.'; box.appendChild(num);
+      for (var k = 0; k < 2; k++) {
+        var ply = i + k + 1;
+        var cell = document.createElement('div'); cell.className = 'm' + alt;
+        if (h[i + k]) {
+          cell.textContent = h[i + k]; cell.dataset.ply = ply; cell.title = 'View this position';
+          if (ply === curPly) { cell.classList.add('cur'); if (viewIndex !== null) cell.classList.add('viewing'); curEl = cell; }
+        }
+        box.appendChild(cell);
+      }
     }
-    box.scrollTop = box.scrollHeight;
+    if (curEl) curEl.scrollIntoView({ block: 'nearest' }); else box.scrollTop = box.scrollHeight;
+    $('navFirst').disabled = $('navPrev').disabled = curPly === 0;
+    $('navNext').disabled = $('navLast').disabled = viewIndex === null;
+    $('viewbar').hidden = viewIndex === null;
+    if (viewIndex !== null) $('viewText').textContent = viewIndex === 0 ? 'Start position' : 'After move ' + Math.ceil(viewIndex / 2) + (viewIndex % 2 ? ' (White)' : ' (Black)');
   }
+  $('moves').addEventListener('click', function (ev) {
+    var c = ev.target.closest('.m[data-ply]'); if (!c) return;
+    setView(parseInt(c.dataset.ply, 10));
+  });
+  $('navFirst').addEventListener('click', function () { setView(0); });
+  $('navPrev').addEventListener('click', function () { stepView(-1); });
+  $('navNext').addEventListener('click', function () { stepView(1); });
+  $('navLast').addEventListener('click', function () { setView(null); });
+  $('goLive').addEventListener('click', function () { setView(null); });
+  $('backHere').addEventListener('click', function () { if (viewIndex !== null) takeBackTo(viewIndex); });
+  document.addEventListener('keydown', function (ev) {
+    if (ev.target !== document.body) return;
+    if (ev.key === 'ArrowLeft') { ev.preventDefault(); stepView(-1); }
+    else if (ev.key === 'ArrowRight') { ev.preventDefault(); stepView(1); }
+    else if (ev.key === 'ArrowUp') { ev.preventDefault(); setView(0); }
+    else if (ev.key === 'ArrowDown') { ev.preventDefault(); setView(null); }
+  });
 
   function colorName(c) { return c === 'w' ? 'White' : 'Black'; }
   function isPlayersTurn() { return game.turn() === playerColor; }
 
   function renderStatus() {
-    var t = $('turn'), text, danger = false;
-    if (game.in_checkmate()) { text = 'Checkmate. <span class="who">' + (isPlayersTurn() ? 'Engine wins' : 'You win') + '</span>'; danger = isPlayersTurn(); }
-    else if (game.in_stalemate()) text = 'Stalemate. <span class="who">Draw</span>';
-    else if (game.in_draw()) text = 'Draw <span class="who">(50 moves or repetition)</span>';
-    else if (thinking) text = 'Stockfish is thinking <span class="who">· ' + colorName(game.turn()) + '</span>';
-    else if (pendingConfirm) { text = 'Confirm: <span class="who">' + pendingConfirm.san + '?</span> Say yes or no'; }
-    else if (isPlayersTurn()) { text = 'Your move <span class="who">· ' + colorName(playerColor) + '</span>' + (game.in_check() ? ', you are in check' : ''); danger = game.in_check(); }
-    else text = 'Engine to move';
-    t.innerHTML = text;
-    t.className = 'turn' + (danger ? ' danger' : '');
-    $('blindTurn').textContent = t.textContent.replace(' · ', ', ') + '.';
+    var yt = $('youTurn'), et = $('engineTurn'), text;
+    yt.className = 'turnpill'; et.className = 'turnpill';
+    var mine = isPlayersTurn();
+    if (game.in_checkmate()) {
+      text = mine ? 'Checkmate. Stockfish wins.' : 'Checkmate. You win.';
+      (mine ? yt : et).textContent = 'checkmated'; (mine ? yt : et).classList.add('danger');
+      (mine ? et : yt).textContent = 'winner'; (mine ? et : yt).classList.add('on');
+    } else if (game.in_stalemate() || game.in_draw()) {
+      text = 'Draw.'; yt.textContent = 'draw'; et.textContent = 'draw';
+    } else if (thinking) {
+      text = 'Stockfish is thinking.'; et.textContent = 'thinking…'; et.classList.add('on'); yt.textContent = 'waiting';
+    } else if (pendingConfirm) {
+      text = 'Confirm ' + pendingConfirm.san + '? Say yes or no.'; yt.textContent = 'confirm?'; yt.classList.add('on'); et.textContent = 'waiting';
+    } else if (mine) {
+      text = 'Your move, ' + colorName(playerColor) + (game.in_check() ? '. You are in check.' : '.');
+      yt.textContent = game.in_check() ? 'check!' : 'your move'; yt.classList.add(game.in_check() ? 'danger' : 'on'); et.textContent = 'waiting';
+    } else {
+      text = 'Stockfish to move.'; et.textContent = 'to move'; et.classList.add('on'); yt.textContent = 'waiting';
+    }
+    $('youSub').textContent = colorName(playerColor);
+    $('blindTurn').textContent = text;
     $('blindEyebrow').textContent = 'Board hidden · move ' + (Math.floor(game.history().length / 2) + 1);
   }
-
   function renderAll() { renderBoard(); renderMoves(); renderStatus(); }
 
   // ---------- Making moves ----------
@@ -858,7 +953,7 @@ function main() {
     // mv: { from, to, promotion? } or SAN string
     var made = game.move(mv);
     if (!made) return false;
-    selected = null; pendingPromotion = null; pendingConfirm = null;
+    selected = null; pendingPromotion = null; pendingConfirm = null; viewIndex = null;
     $('promoRow').hidden = true;
     renderAll();
     var text = describeMove(made, 'you');
@@ -891,6 +986,7 @@ function main() {
       if (!mv) { renderAll(); return; }
       var made = game.move({ from: mv.from, to: mv.to, promotion: mv.promotion || 'q' });
       if (!made) { log('err', 'Engine suggested an illegal move (' + mv.from + mv.to + '). Ignoring.'); renderAll(); return; }
+      viewIndex = null;
       renderAll();
       var text = describeMove(made, 'engine');
       lastMoveText = text;
@@ -902,6 +998,7 @@ function main() {
   // Click-to-move
   $('board').addEventListener('click', function (ev) {
     var el = ev.target.closest('.sq'); if (!el) return;
+    if (viewIndex !== null) { setView(null); return; }   // clicking the board while browsing jumps back to the live game
     if (thinking || !isPlayersTurn() || game.game_over()) return;
     var sq = el.dataset.sq;
     var piece = game.get(sq);
@@ -1076,15 +1173,24 @@ function main() {
     }
 
     if (/\b(new game|restart|reset|start over|play again)\b/.test(joined)) { newGame(); return true; }
+    var mm = joined.match(/\b(take back|takeback|go back|undo|return|rewind)\b.*\bmove (\d+)\b/);
+    if (mm) { var nb = parseInt(mm[2], 10); takeBackTo(playerColor === 'w' ? Math.max(0, 2 * (nb - 1)) : 2 * nb - 1); return true; }
     if (/\b(undo|take back|takeback|take that back|go back)\b/.test(joined)) { undo(); return true; }
+    var gm = joined.match(/\b(go to|show|view|jump to)\b.*\bmove (\d+)\b/);
+    if (gm) { var ng = parseInt(gm[2], 10); setView(Math.min(game.history().length, 2 * ng)); say(viewIndex === null ? 'Showing the latest position.' : 'Showing the position after move ' + Math.ceil(viewIndex / 2) + '.', { kind: 'app' }); return true; }
+    if (/^(next|forward|next move)$/.test(joined)) { stepView(1); say(viewIndex === null ? 'Latest position.' : 'After ' + sanSpoken(game.history()[viewIndex - 1]) + '.', { kind: 'app' }); return true; }
+    if (/^(back|previous|previous move|step back)$/.test(joined)) { stepView(-1); say(viewIndex === 0 ? 'Start position.' : 'After ' + sanSpoken(game.history()[viewIndex - 1]) + '.', { kind: 'app' }); return true; }
+    if (/\b(latest|live|current position|go to the end|go live)\b/.test(joined)) { setView(null); say('Showing the latest position.', { kind: 'app' }); return true; }
+    if (/\b(start position|go to the start|beginning)\b/.test(joined)) { setView(0); say('Start position.', { kind: 'app' }); return true; }
     if (/\b(hide|blindfold on|blindfold mode|blind mode|close)\b/.test(joined) && /\b(board|blindfold|blind)\b/.test(joined)) { setBlind(true); say('Board hidden.'); return true; }
     if (/\b(show|reveal|display|open|unhide|blindfold off)\b/.test(joined) && /\b(board|blindfold)\b/.test(joined)) { setBlind(false); say('Board shown.'); return true; }
-    if (/\b(read|describe|announce|tell me|say)\b/.test(joined) && /\b(board|position|pieces)\b/.test(joined) || /^(position|board)$/.test(joined)) { say(describeBoard()); return true; }
+    if (/\b(read|describe|announce|tell me|say|list|recap)\b/.test(joined) && /\b(moves|move list|game|board|score ?sheet|notation)\b/.test(joined) || /^(moves|board|game)$/.test(joined)) { say(describeMoves()); return true; }
+    if (/\b(read|describe|announce|tell me|say|list)\b/.test(joined) && /\b(position|pieces)\b/.test(joined) || /^(position|pieces)$/.test(joined)) { say(describeBoard()); return true; }
     if (/\b(last move|previous move|what did you (play|move|do))\b/.test(joined)) { say(lastMoveText || 'Nothing has been played yet.'); return true; }
     if (/\b(repeat|again|what was that|say that again)\b/.test(joined)) { say(lastAnnouncement || 'Nothing to repeat yet.'); return true; }
     if (/\bwhose (move|turn)\b|\bmy turn\b|\bwho.s (move|turn)\b/.test(joined)) { say(isPlayersTurn() ? 'It is your move.' : 'I am thinking.'); return true; }
     if (/\b(help|what can i say|commands)\b/.test(joined)) {
-      say('Say a move like knight to f3, or e4, or bishop takes e5, or castle kingside. Ask where is my king, read the board, what can my knight do, last move, take back, new game, hide board, or show board.');
+      say('Say a move like knight to f3, or e4, or bishop takes e5, or castle kingside. Say read the moves to hear the game, read the position for the pieces, where is my king, what can my knight do, last move, take back, take back to move 3, new game, hide board, or show board.');
       return true;
     }
     if (/\bresign\b/.test(joined)) { say('You resign. I accept. Say new game to play again.'); log('app', 'You resigned.'); return true; }
@@ -1204,7 +1310,7 @@ function main() {
   function startListening() {
     if (!SR) { showNote('Speech recognition is not available in this browser. Type the command instead.'); return; }
     if (listening) return;
-    if (speechBusy) { try { window.speechSynthesis.cancel(); } catch (e) {} speechBusy = false; }
+    if (speechBusy) stopSpeaking();
     try {
       rec = new SR();
       rec.lang = 'en-US';
@@ -1350,7 +1456,8 @@ function main() {
     game = new Chess();
     selected = null; pendingConfirm = null; pendingPromotion = null; thinking = false;
     playerColor = $('colorB').checked ? 'b' : 'w';
-    buildCoords();
+    viewIndex = null;
+    stopSpeaking();
     renderAll();
     if (engine) engine.newGame();
     $('heard').textContent = '';
@@ -1363,14 +1470,44 @@ function main() {
     pendingConfirm = null;
     game.undo();                                                   // last move (usually the engine's)
     if (game.history().length && !isPlayersTurn()) game.undo();   // and yours before it
-    selected = null;
+    selected = null; viewIndex = null;
     renderAll();
     var h = game.history();
-    say('Taken back. ' + (h.length ? 'Last move now ' + h[h.length - 1] + '. ' : '') + 'Your move.', { kind: 'app' });
+    say('Taken back. ' + (h.length ? 'Last move now ' + sanSpoken(h[h.length - 1]) + '. ' : '') + 'Your move.', { kind: 'app' });
+  }
+  // Rewind the live game to a given ply (used by "take back to move N" and the move list).
+  function takeBackTo(ply) {
+    if (thinking) { say('Hold on, let me finish thinking first.'); return; }
+    var n = game.history().length;
+    if (ply >= n) { setView(null); return; }
+    while (game.history().length > ply) game.undo();
+    viewIndex = null; selected = null; pendingConfirm = null;
+    renderAll();
+    var h = game.history();
+    say('Taken back to ' + (h.length ? 'move ' + Math.ceil(h.length / 2) + ', after ' + sanSpoken(h[h.length - 1]) : 'the start') + '. ' + (isPlayersTurn() ? 'Your move.' : 'My move.'), { kind: 'app' });
+    if (!isPlayersTurn()) setTimeout(engineMove, 500);
   }
   $('newGame').addEventListener('click', newGame);
   $('undoBtn').addEventListener('click', undo);
   $('readBtn').addEventListener('click', function () { say(describeBoard()); });
+  $('readMovesBtn').addEventListener('click', function () { say(describeMoves()); });
+  $('testVoice').addEventListener('click', function () { say('Knight from G 1 to F 3. Check.', { kind: 'app' }); });
+
+  // Voice engine choice and the OpenAI key live only in this browser.
+  function syncVoiceEngineUI() {
+    var oa = $('voiceEngine').value === 'openai';
+    $('openaiRows').hidden = !oa;
+    $('browserVoiceRow').hidden = oa;
+  }
+  $('voiceEngine').addEventListener('change', function () { syncVoiceEngineUI(); try { localStorage.setItem('bc-voice-engine', this.value); } catch (e) {} });
+  $('openaiKey').addEventListener('change', function () { try { localStorage.setItem('bc-openai-key', this.value.trim()); } catch (e) {} });
+  $('openaiVoice').addEventListener('change', function () { try { localStorage.setItem('bc-openai-voice', this.value); } catch (e) {} });
+  try {
+    var ve = localStorage.getItem('bc-voice-engine'); if (ve) $('voiceEngine').value = ve;
+    var ok = localStorage.getItem('bc-openai-key'); if (ok) $('openaiKey').value = ok;
+    var ov = localStorage.getItem('bc-openai-voice'); if (ov) $('openaiVoice').value = ov;
+  } catch (e) {}
+  syncVoiceEngineUI();
   $('colorW').addEventListener('change', newGame);
   $('colorB').addEventListener('change', newGame);
 
@@ -1380,6 +1517,7 @@ function main() {
     $('levelHint').textContent = LEVELS[n - 1].hint;
     $('levelDown').disabled = n <= 1;
     $('levelUp').disabled = n >= LEVELS.length;
+    $('engineSub').textContent = 'Level ' + n;
     if (engine && engine.kind === 'stockfish') setEngineBadge('Stockfish 10 · Level ' + n, 'ok');
   }
   function stepLevel(d) {
@@ -1398,7 +1536,7 @@ function main() {
       try { game.load(data.fen); if (data.pgn) { var g2 = new Chess(); if (g2.load_pgn(data.pgn)) game = g2; } } catch (e) {}
       if (data.blind) setBlind(true);
     }
-    buildCoords(); updateLevel(); renderAll();
+    updateLevel(); renderAll();
   }
   try {
     if (window.claude && window.claude.hot) {
@@ -1410,7 +1548,7 @@ function main() {
   log('app', 'Ready. Click a piece, press the microphone, or type a command. Everything heard and everything said shows up here.');
 
   // Expose for tests and tinkering.
-  window.__blindfold = { handleUtterance: handleUtterance, extractMoveIntent: extractMoveIntent, findMove: findMove, tokenize: tokenize, game: function () { return game; }, engine: function () { return engine; }, describeBoard: describeBoard };
+  window.__blindfold = { handleUtterance: handleUtterance, extractMoveIntent: extractMoveIntent, findMove: findMove, tokenize: tokenize, game: function () { return game; }, engine: function () { return engine; }, describeBoard: describeBoard, describeMoves: describeMoves, sanSpoken: sanSpoken, viewIndex: function () { return viewIndex; }, setView: setView };
 }
 
 // chess.js is required for everything. Try a second CDN before giving up.
