@@ -458,6 +458,21 @@ function main() {
     while (box.children.length > 60) box.removeChild(box.lastChild);
   }
 
+  // iPhones and iPads need special handling: one microphone user at a time,
+  // Safari only, and a tap before any sound can play.
+  var IS_IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var ttsCtx = null;
+  function unlockAudio() {
+    // Called from a tap. After this, sounds may start without another tap.
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (AC && !ttsCtx) ttsCtx = new AC();
+      if (ttsCtx && ttsCtx.state === 'suspended') ttsCtx.resume();
+      if ('speechSynthesis' in window && !unlockAudio.done) { var u = new SpeechSynthesisUtterance(' '); u.volume = 0; window.speechSynthesis.speak(u); }
+      unlockAudio.done = true;
+    } catch (e) {}
+  }
+
   // ---------- Speech output ----------
   // Everything spoken goes through one queue, so a quick engine reply never
   // cuts off the sentence before it. Voices: the browser's, or ElevenLabs.
@@ -532,13 +547,22 @@ function main() {
         var why = r.status === 401 ? 'the API key was rejected' : ((r.status === 404 || /voice_not_found/.test(body)) ? 'that voice ID was not found; add the voice to My Voices in ElevenLabs' : 'ElevenLabs replied ' + r.status);
         throw new Error(why);
       });
-      return r.blob();
-    }).then(function (blob) {
-      var url = URL.createObjectURL(blob);
-      var a = new Audio(url); currentAudio = a;
-      a.playbackRate = parseFloat($('rate').value) || 1;
-      a.onended = a.onerror = function () { URL.revokeObjectURL(url); currentAudio = null; finish(); };
-      return a.play();
+      return r.arrayBuffer();
+    }).then(function (buf) {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!ttsCtx && AC) ttsCtx = new AC();
+      if (!ttsCtx) throw new Error('no audio output available');
+      if (ttsCtx.state === 'suspended') ttsCtx.resume();
+      return new Promise(function (resolve, reject) {
+        ttsCtx.decodeAudioData(buf.slice(0), function (audio) {
+          var src = ttsCtx.createBufferSource();
+          src.buffer = audio;
+          src.connect(ttsCtx.destination);
+          currentAudio = { pause: function () { try { src.stop(); } catch (e) {} } };
+          src.onended = function () { currentAudio = null; resolve(); };
+          src.start();
+        }, function () { reject(new Error('could not decode the audio')); });
+      }).then(finish);
     }).catch(function (err) {
       clearTimeout(timer);
       showNote('ElevenLabs voice failed: ' + ((err && err.message) || err) + '. Using the browser voice for now.');
@@ -1284,14 +1308,15 @@ function main() {
 
   // ---------- Speech input ----------
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  var rec = null, listening = false, wantListening = false;
+  var rec = null, listening = false, wantListening = false, everListened = false;
 
   function setVoiceBadge(text, cls) { var b = $('voiceBadge'); $('voiceBadgeText').textContent = text; b.className = 'pill ' + (cls || ''); }
   function showNote(text, info) { var n = $('micNote'); n.textContent = text; n.className = 'note' + (info ? ' info' : ''); n.hidden = !text; }
 
   if (!SR) {
     setVoiceBadge('No speech recognition here', 'warn');
-    showNote('This browser has no speech recognition. Chrome or Edge on desktop or Android work best. You can still type commands below to see exactly how voice input will behave.');
+    if (IS_IOS) showNote('On iPhone and iPad, open this page in Safari. Chrome and other iPhone browsers cannot use speech recognition. Typed commands still work here.');
+    else showNote('This browser has no speech recognition. Chrome or Edge on desktop or Android work best. You can still type commands below to see exactly how voice input will behave.');
   } else {
     setVoiceBadge('Voice ready', 'ok');
   }
@@ -1305,17 +1330,28 @@ function main() {
       rec.lang = 'en-US';
       rec.interimResults = true;
       rec.maxAlternatives = 4;
-      rec.onstart = function () { listening = true; wantListening = true; updateMicUI(); startMeter(); };
+      rec.onstart = function () { listening = true; wantListening = true; everListened = true; updateMicUI(); startMeter(); };
+      var lastInterim = '', gotFinal = false;
       rec.onresult = function (ev) {
         var last = ev.results[ev.results.length - 1];
-        if (!last.isFinal) { $('heard').innerHTML = '<i>Hearing: ' + escapeHtml(last[0].transcript) + '\u2026</i>'; $('hearing').textContent = 'Hearing: \u201C' + last[0].transcript + '\u2026\u201D'; return; }
+        if (!last.isFinal) {
+          lastInterim = last[0].transcript;
+          $('heard').innerHTML = '<i>Hearing: ' + escapeHtml(lastInterim) + '\u2026</i>'; $('hearing').textContent = 'Hearing: \u201C' + lastInterim + '\u2026\u201D';
+          return;
+        }
+        gotFinal = true;
         var alts = [];
         for (var i = 1; i < last.length; i++) alts.push(last[i].transcript);
         handleUtterance(last[0].transcript.trim(), alts);
       };
       rec.onerror = function (ev) {
         listening = false; updateMicUI();
-        if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed') {
+        if ((ev.error === 'not-allowed' || ev.error === 'service-not-allowed') && IS_IOS && everListened) {
+          // Safari refused a silent restart: it wants a tap for the next one.
+          setVoiceBadge('Tap to speak', 'ok');
+          $('micLabel').textContent = 'Tap the mic to speak';
+          $('hearing').textContent = 'Tap the mic to speak.';
+        } else if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed') {
           setVoiceBadge('Microphone blocked', 'warn');
           if (window.top !== window) showNote('The microphone is blocked inside this preview frame. Open the page at its own address (the GitHub Pages link) and allow the microphone there. Typed commands go through the exact same parser.');
           else showNote('Chrome is blocking the microphone for this site. Click the icon at the left of the address bar, set Microphone to Allow, then reload the page.');
@@ -1334,8 +1370,10 @@ function main() {
       };
       rec.onend = function () {
         listening = false; updateMicUI();
+        // Safari on iPhone often ends without marking the result final. Use what it heard.
+        if (!gotFinal && lastInterim.trim()) { gotFinal = true; var t = lastInterim; lastInterim = ''; handleUtterance(t.trim(), []); }
         if ($('handsFree').checked && wantListening && !speechBusy && !thinking && !game.game_over() && isPlayersTurn()) {
-          setTimeout(function () { if (!listening && !speechBusy) startListening(); }, 250);
+          setTimeout(function () { if (!listening && !speechBusy) startListening(); }, IS_IOS ? 400 : 250);
         }
       };
       rec.start();
@@ -1352,6 +1390,7 @@ function main() {
   // moves while you talk, the problem is the OS or device, not the page.
   var meterStream = null, meterCtx = null, meterRaf = 0, silentSoFar = true, meterStart = 0, silenceNoteShown = false;
   function startMeter() {
+    if (IS_IOS) return;   // Safari gives the mic to one API at a time; the meter would starve recognition
     if (meterStream || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
     silentSoFar = true; meterStart = Date.now();
     navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
@@ -1398,9 +1437,13 @@ function main() {
     if (listening) setVoiceBadge('Listening', 'live'); else if (SR) setVoiceBadge('Voice ready', 'ok');
   }
   function micClick() {
+    unlockAudio();
     if (listening) { stopListening(); $('handsFree').checked = false; }
     else { wantListening = true; startListening(); }
   }
+  $('testVoice').addEventListener('click', unlockAudio);
+  $('typedGo').addEventListener('click', unlockAudio);
+  $('newGame').addEventListener('click', unlockAudio);
   $('micBtn').addEventListener('click', micClick);
   $('micBtn2').addEventListener('click', micClick);
   // "Try saying" chips send the phrase through the same path as speech.
