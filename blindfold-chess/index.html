@@ -305,7 +305,7 @@
       </div>
 
       <div class="typed">
-        <input type="text" id="typed" placeholder="or type: knight to f3" autocomplete="off" aria-label="Type a voice command">
+        <input type="text" id="typed" placeholder="or type a move: Nf3, Bxe5, O-O, e4" autocomplete="off" aria-label="Type a voice command">
         <button type="button" class="btn" id="typedGo">Send</button>
       </div>
       <div class="note" id="micNote" hidden></div>
@@ -390,6 +390,7 @@
           <details>
             <summary>What you can say</summary>
             <div class="chips">
+              <button type="button" class="chip" data-say="Nf3">Nf3</button>
               <button type="button" class="chip" data-say="knight f3">knight f3</button>
               <button type="button" class="chip" data-say="bishop takes e5">bishop takes e5</button>
               <button type="button" class="chip" data-say="castle kingside">castle kingside</button>
@@ -1067,7 +1068,9 @@ function main() {
   function tokenize(text) {
     var t = String(text).toLowerCase()
       .replace(/[’']/g, '')
+      .replace(/\b(o|0)-(o|0)-(o|0)\b/g, 'ooo').replace(/\b(o|0)-(o|0)\b/g, 'oo')
       .replace(/-/g, ' ')
+      .replace(/=/g, ' equals ')
       .replace(/[^a-z0-9 ]+/g, ' ')
       .replace(/\b([a-h])\s*([1-8])\b/g, '$1$2')      // "e 4" -> "e4"
       .trim();
@@ -1107,6 +1110,58 @@ function main() {
       if (CAPTURE_WORDS[w]) { intent.capture = true; continue; }
     }
     return intent;
+  }
+
+  // Algebraic notation, typed ("Nd6", "Bxe5", "exd5", "O-O", "e8=Q") or spoken
+  // ("n d 6", "NF3", "b takes e5", "and f3" as the recognizer often hears "N").
+  var SAN_LETTER = {
+    n: 'n', en: 'n', an: 'n', and: 'n', 'in': 'n', end: 'n', knight: 'n',
+    b: 'b', be: 'b', bee: 'b', bishop: 'b',
+    r: 'r', are: 'r', our: 'r', rook: 'r',
+    q: 'q', queue: 'q', cue: 'q', queen: 'q',
+    k: 'k', kay: 'k', king: 'k'
+  };
+  function sanFromTokens(tokens) {
+    var out = '';
+    for (var i = 0; i < tokens.length; i++) {
+      var w = tokens[i];
+      if (/^(check|checkmate|mate|plus|hash)$/.test(w)) continue;
+      if (/^(o|0|oo|ooo|o-o|o-o-o|000|00)$/.test(w)) { out += w.replace(/0/g, 'o').replace(/-/g, ''); continue; }
+      if (/^[a-h][1-8]$/.test(w)) { out += w; continue; }
+      if (FILE_WORDS[w] !== undefined && i + 1 < tokens.length && RANK_WORDS[tokens[i + 1]] !== undefined) { out += FILE_WORDS[w] + RANK_WORDS[tokens[i + 1]]; i++; continue; }
+      if (/^[kqrbn]?[a-h]?[1-8]?x?[a-h][1-8](=?[qrbn])?$/.test(w)) { out += w; continue; }   // typed "nd6", "bxe5", "e8=q"
+      if (CAPTURE_WORDS[w] || w === 'x' || w === 'ex' || w === 'cross') { out += 'x'; continue; }
+      if (/^(equals|equal|promote|promotes|promotion|to)$/.test(w) && i + 1 < tokens.length && SAN_LETTER[tokens[i + 1]] && i > 0) { out += '='; continue; }
+      if (SAN_LETTER[w]) { out += SAN_LETTER[w]; continue; }
+      if (FILE_WORDS[w] !== undefined && w.length <= 2) { out += FILE_WORDS[w]; continue; }   // "e takes d5" -> e x d5
+      return null;   // anything else is not notation; let the plain-language parser try
+    }
+    out = out.replace(/^ooo$/, 'o-o-o').replace(/^oo$/, 'o-o').replace(/([a-h][18])([qrbn])$/, '$1=$2');
+    return /^([kqrbn]?[a-h]?[1-8]?x?[a-h][1-8](=[qrbn])?|o-o(-o)?)$/.test(out) ? out : null;
+  }
+  function normSan(san) { return san.replace(/[+#]/g, '').toLowerCase(); }
+  function findBySan(tokens) {
+    var want = sanFromTokens(tokens);
+    if (!want) return null;
+    var legal = game.moves({ verbose: true });
+    var hits = legal.filter(function (m) { return normSan(m.san) === want; });
+    if (!hits.length && want.indexOf('x') < 0) hits = legal.filter(function (m) { return normSan(m.san).replace('x', '') === want; });   // "Ne5" when it is actually a capture
+    if (!hits.length && want.indexOf('x') >= 0) hits = legal.filter(function (m) { return normSan(m.san) === want.replace('x', ''); });
+    if (!hits.length && /^[kqrbn]/.test(want)) {
+      // "bd6" could only be the bishop, but "bxc6" might be the b-pawn: try the pawn reading too
+      var asPawn = want.slice(1);
+      if (want[0] === 'b') hits = legal.filter(function (m) { return normSan(m.san) === 'b' + asPawn; });
+    }
+    if (!hits.length && /^[kqrbn]/.test(want)) {
+      // spoken "n d 6" with two knights able to go there: notation would need a file
+      var rest = want.slice(1).replace('x', '');
+      hits = legal.filter(function (m) { return m.piece === want[0] && normSan(m.san).replace('x', '').replace(/^[kqrbn][a-h1-8]?/, '') === rest.replace(/^[a-h1-8]?(?=[a-h][1-8])/, ''); });
+    }
+    if (!hits.length && /^[a-h]?x?[a-h][18]$/.test(want)) hits = legal.filter(function (m) { return normSan(m.san) === want + '=q'; });   // bare "b8" promotes to a queen
+    if (hits.length === 1) return { move: hits[0] };
+    if (hits.length > 1) return { ambiguous: hits, why: 'Which one? ' + hits.map(function (m) { return PIECE_NAME[m.piece] + ' from ' + sqSpoken(m.from); }).join(', or ') + '.' };
+    var pretty = want.replace(/^[kqrbn]/, function (c) { return c.toUpperCase(); }).replace(/=([qrbn])$/, function (m, c) { return '=' + c.toUpperCase(); }).replace(/^o-o/, 'O-O').replace(/-o$/, '-O');
+    return { error: pretty + ' is not a legal move here.' };
   }
 
   function findMove(intent) {
@@ -1277,8 +1332,12 @@ function main() {
 
     var firstError = null, firstAmbiguous = null;
     for (var i = 0; i < all.length; i++) {
-      var intent = extractMoveIntent(tokenize(all[i]));
-      var res = findMove(intent);
+      var toks = tokenize(all[i]);
+      var res = findBySan(toks);
+      if (res && res.move) { if (i > 0) log('app', 'Matched using alternative transcript: "' + all[i] + '"'); return playParsedMove(res.move); }
+      if (res && res.ambiguous && !firstAmbiguous) firstAmbiguous = res;
+      var intent = extractMoveIntent(toks);
+      res = findMove(intent);
       if (!res) continue;
       if (res.move) {
         if (i > 0) log('app', 'Matched using alternative transcript: "' + all[i] + '"');
@@ -1580,7 +1639,7 @@ function main() {
   log('app', 'Ready. Click a piece, press the microphone, or type a command. Everything heard and everything said shows up here.');
 
   // Expose for tests and tinkering.
-  window.__blindfold = { handleUtterance: handleUtterance, extractMoveIntent: extractMoveIntent, findMove: findMove, tokenize: tokenize, game: function () { return game; }, engine: function () { return engine; }, describeBoard: describeBoard, describeMoves: describeMoves, sanSpoken: sanSpoken, viewIndex: function () { return viewIndex; }, setView: setView };
+  window.__blindfold = { handleUtterance: handleUtterance, extractMoveIntent: extractMoveIntent, findMove: findMove, tokenize: tokenize, game: function () { return game; }, engine: function () { return engine; }, describeBoard: describeBoard, describeMoves: describeMoves, sanSpoken: sanSpoken, findBySan: findBySan, viewIndex: function () { return viewIndex; }, setView: setView };
 }
 
 // chess.js is required for everything. Try a second CDN before giving up.
